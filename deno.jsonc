@@ -1,0 +1,16 @@
+{
+  "tasks": {
+    "dev": "deno run --watch main.ts"
+  },
+  "imports": {
+    "std/": "https://deno.land/std@0.210.0/",
+    "maxmind": "https://esm.sh/maxmind@4.3.18",
+    "ejs": "https://esm.sh/ejs@3.1.9"
+  },
+  "deploy": {
+    "project": "47dce628-777d-47d1-9fe6-a55b0bbe6da3",
+    "exclude": [],
+    "include": [],
+    "entrypoint": "main.ts"
+  }
+}

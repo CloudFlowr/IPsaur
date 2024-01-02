@@ -1,0 +1,78 @@
+<html>
+<style>
+  .card {
+    padding: 5px;
+    margin: 5px;
+    border: 1px solid black;
+    border-radius: 5px;
+  }
+</style>
+
+
+<body>
+  <h1> IP: <%= ip %>
+  </h1>
+
+  <h3>User agent:</h3>
+  <div class="card">
+    <%= ua %>
+  </div>
+  <h3>IP Details:</h3>
+  <pre class="card"><%= Deno.inspect(ip_details) %></pre>
+  </div>
+  <button id="testLatency" onclick="this.style.display='none';testLatency();">Test</button> Latency: <span
+    id="latency">0</span>ms. Tested at: <span id="testLatencyTs"></span><br /><br />
+
+  Bandwidth - DOWN: <button id="testBwDown" onclick="this.style.display='none';testBwDown();">Test</button> <span
+    id="bwDown">0</span>bps (<span id="bwDownTime">0</span>sec). Tested at: <span id="testBwDownTs"></span>
+
+
+
+</body>
+<script>
+
+  function testBwDown() {
+    // document.getElementById('testBwDown').style.display='none';
+
+    const startTS = Date.now();
+    fetch('/download').then((rsp) => {
+
+      rsp.arrayBuffer().then((v) => {
+        const endTS = Date.now();
+        const rspTime = Number.parseInt(rsp.headers.get('x-response-time')) || 0;
+        const dlTime = endTS - startTS - rspTime;
+        const dlTimeSec = dlTime / 1000;
+
+        const dlSpeed = Math.round(v.byteLength / dlTimeSec);
+        let dlSpeedH = (dlSpeed, '');
+        if (dlSpeed > 1000) dlSpeedH = `${dlSpeed / 1000}K`;
+        if (dlSpeed > 1000000) dlSpeedH = `${Math.round(dlSpeed / 1000) / 1000}M`;
+        if (dlSpeed > 1000000000) dlSpeedH = `${Math.round(dlSpeed / 1000000) / 1000}G`;
+
+        document.getElementById('bwDown').innerText = dlSpeedH;
+        document.getElementById('bwDownTime').innerText = dlTimeSec;
+        document.getElementById('testBwDownTs').innerText = new Date().toJSON();
+        document.getElementById('testBwDown').style.display = 'unset';
+      })
+
+    })
+
+  }
+
+  function testLatency() {
+    // document.getElementById('testLatency').style.display='none';
+    const startTS = Date.now();
+    fetch('/empty').then((rsp) => {
+      const endTS = Date.now();
+      const rspTime = Number.parseInt(rsp.headers.get('x-response-time')) || 0;
+      document.getElementById('latency').innerText = endTS - startTS - rspTime;
+      document.getElementById('testLatencyTs').innerText = new Date().toJSON();
+      document.getElementById('testLatency').style.display = 'unset';
+
+    })
+
+  }
+  testLatency();
+</script>
+
+</html>
