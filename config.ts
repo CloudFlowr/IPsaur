@@ -21,11 +21,11 @@ export default {
     db: {
       asn: "./mmdb/dbip-asn-lite-2024-01.mmdb",
       city: "./mmdb/dbip-city-lite-2024-01.mmdb",
-      country: "./mmdb/dbip-country-lite-2024-01.mmdb",
-      anonymousIP: "",
+      // country: "./mmdb/dbip-country-lite-2024-01.mmdb",
+      // anonymousIP: "",
       connectionType: "",
-      domain: "",
-      isp: "",
+      // domain: "",
+      // isp: "",
     },
   },
 };

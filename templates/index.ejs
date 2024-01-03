@@ -1,78 +1,119 @@
 <html>
-<style>
-  .card {
-    padding: 5px;
-    margin: 5px;
-    border: 1px solid black;
-    border-radius: 5px;
-  }
-</style>
+<head>
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css"
+    integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/grids-responsive-min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/client.css" />
 
+</head>
 
 <body>
-  <h1> IP: <%= ip %>
-  </h1>
+  <input id="darkModeSwitcher" type="checkbox" />
+  <div class="pure-g" style="height: 100vh;">
+    <div class="pure-g pure-menu pure-menu-horizontal">
+      <a href="#" class="pure-menu-heading pure-menu-link"><img src="/favicon-32x32.png" alt="IP123 logo" width="32px"
+          height="32px"></a>
+      <ul class="pure-menu-list custom-menu-right">
+        <li class="pure-menu-item">
+          <!-- <button class="pure-button">Share</button> -->
+        </li>
+        <li class="pure-menu-item" style="width: 40px;">
+        </li>
+      </ul>
+    </div>
 
-  <h3>User agent:</h3>
-  <div class="card">
-    <%= ua %>
+    <div class="pure-u-md-1-2">
+      <h1>Your IP address:</h1>
+      <h2 class="card"><%= ip %></h2>
+
+      <h1>User agent:</h1>
+      <div class="card"><%= ua %></div>
+    </div>
+
+    <div class="pure-u-md-1-2">
+      <h1>IP Location Details:</h1>
+      <table class="pure-table pure-table-bordered">
+        <tbody>
+        <% if (ip_details.city) { %>
+          <tr>
+            <th>Country</th>
+            <td>
+              <%= ip_details.city.continent.code %>
+                <%= ip_details.city.country.iso_code %> - <%= ip_details.city.country.names.en %>
+            </td>
+          </tr>
+          <tr>
+            <th>City</th>
+            <td>
+              <%= ip_details.city.city.names.en %>
+            </td>
+          </tr>
+        <% } %>
+        <% if (ip_details.asn) { %>
+          <tr>
+            <th>Provider</th>
+            <td>
+              <%= ip_details.asn.autonomous_system_organization %> (AS<%= ip_details.asn.autonomous_system_number%>)
+            </td>
+          </tr>
+        <% } %>
+        <% if (ip_details.connectionType) { %>
+          <tr>
+            <th>Connection Type</th>
+            <td>
+              <%= ip_details.connectionType.connection_type %>
+            </td>
+          </tr>
+        <% } %>
+        </tbody>
+      </table>
+
+      <% if (providers.maxmind) { %>
+        <div style="font-size: small;">
+          This product includes GeoLite2 data created by MaxMind, available from
+          <a target="_blank" href="https://www.maxmind.com">https://www.maxmind.com</a>.
+        </div>
+      <% } %>
+      <% if (providers.dbip) { %>
+        <div style="font-size: small;">
+          <a target="_blank" href='https://db-ip.com'>IP Geolocation by DB-IP</a>
+        </div>
+      <% } %>
+    </div>
+
+    <div class="pure-u-md-2-2" style="width:100%">
+      <h1>Network Diagnostics</h1>
+      <table class="pure-table">
+        <thead>
+          <tr>
+            <th>Region</th>
+            <th>Round-Trip Time</th>
+            <th>Download Speed</th>
+            <th>Upload Speed</th>
+            <th style="text-align: center;"><button id="test_all" class="pure-button pure-button-primary">Test All</button></th>
+        </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Primary</td>
+            <td><span id="rtt_primary"></span></td>
+            <td><span id="dl_primary"></span></td>
+            <td><span id="ul_primary"></span></td>
+            <td style="text-align: center;"><button id="test_primary"
+              class="pure-button pure-button-primary">Test</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-  <h3>IP Details:</h3>
-  <pre class="card"><%= Deno.inspect(ip_details) %></pre>
-  </div>
-  <button id="testLatency" onclick="this.style.display='none';testLatency();">Test</button> Latency: <span
-    id="latency">0</span>ms. Tested at: <span id="testLatencyTs"></span><br /><br />
-
-  Bandwidth - DOWN: <button id="testBwDown" onclick="this.style.display='none';testBwDown();">Test</button> <span
-    id="bwDown">0</span>bps (<span id="bwDownTime">0</span>sec). Tested at: <span id="testBwDownTs"></span>
-
-
-
 </body>
-<script>
 
-  function testBwDown() {
-    // document.getElementById('testBwDown').style.display='none';
-
-    const startTS = Date.now();
-    fetch('/download').then((rsp) => {
-
-      rsp.arrayBuffer().then((v) => {
-        const endTS = Date.now();
-        const rspTime = Number.parseInt(rsp.headers.get('x-response-time')) || 0;
-        const dlTime = endTS - startTS - rspTime;
-        const dlTimeSec = dlTime / 1000;
-
-        const dlSpeed = Math.round(v.byteLength / dlTimeSec);
-        let dlSpeedH = (dlSpeed, '');
-        if (dlSpeed > 1000) dlSpeedH = `${dlSpeed / 1000}K`;
-        if (dlSpeed > 1000000) dlSpeedH = `${Math.round(dlSpeed / 1000) / 1000}M`;
-        if (dlSpeed > 1000000000) dlSpeedH = `${Math.round(dlSpeed / 1000000) / 1000}G`;
-
-        document.getElementById('bwDown').innerText = dlSpeedH;
-        document.getElementById('bwDownTime').innerText = dlTimeSec;
-        document.getElementById('testBwDownTs').innerText = new Date().toJSON();
-        document.getElementById('testBwDown').style.display = 'unset';
-      })
-
-    })
-
-  }
-
-  function testLatency() {
-    // document.getElementById('testLatency').style.display='none';
-    const startTS = Date.now();
-    fetch('/empty').then((rsp) => {
-      const endTS = Date.now();
-      const rspTime = Number.parseInt(rsp.headers.get('x-response-time')) || 0;
-      document.getElementById('latency').innerText = endTS - startTS - rspTime;
-      document.getElementById('testLatencyTs').innerText = new Date().toJSON();
-      document.getElementById('testLatency').style.display = 'unset';
-
-    })
-
-  }
-  testLatency();
-</script>
+<script src="/client.js"></script>
 
 </html>

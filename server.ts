@@ -1,7 +1,9 @@
 import config from "./config.ts";
 import { STATUS_CODE } from "std/http/status.ts";
-import { UserAgent } from "std/http/user_agent.ts";
+// import { UserAgent } from "std/http/user_agent.ts";
 import { Buffer } from "node:buffer";
+
+import { join as path_join } from "std/path/join.ts";
 
 import maxmind, { Reader as mmReader, Response as mmResponse } from "maxmind";
 
@@ -12,9 +14,11 @@ function log(level: LogLevel, ...message: (number | string | object)[]) {
   console.log(new Date().toJSON(), level, ...message);
 }
 
-const geo_dbs: Map<string, mmReader<mmResponse>> = new Map();
+const geo_dbs = new Map<string, mmReader<mmResponse>>();
 
-const ejs_templates: Map<string, ejs.AsyncTemplateFunction> = new Map();
+const ejs_templates = new Map<string, ejs.AsyncTemplateFunction>();
+
+const static_files = new Map<string, Uint8Array>();
 
 function get_ip_details(ip: string) {
   maxmind.validate(ip);
@@ -29,21 +33,32 @@ function get_ip_details(ip: string) {
 
 async function serverHandler(req: Request, _info: Deno.ServeHandlerInfo) {
   const url = new URL(req.url);
+
+  const static_content = static_files.get(url.pathname.replace(/\/*/, ""));
+  if (static_content) return new Response(static_content);
+
+  if (url.pathname === "/bandwidth") {
+    if (req.method.toLowerCase() === "get") {
+      const length = Number.parseInt("" + url.searchParams.get("length")) ||
+        100000;
+      const sample = Date.now().toString() + crypto.randomUUID();
+      return new Response(
+        "".padEnd(length, sample),
+        { headers: { "Content-Encoding": "identity" } },
+      );
+    }
+    if (req.method.toLowerCase() === "post") {
+      await req.arrayBuffer();
+      return new Response(undefined, { status: STATUS_CODE.Accepted });
+      // const ab = await req.arrayBuffer();
+      // return new Response(ab.byteLength.toString(), {status:STATUS_CODE.Accepted});
+    }
+  }
+
   if (req.method.toLowerCase() === "get") {
     if (url.pathname === "/empty") {
       // Empty reponsse used to measure round-trip time (aka latency).
       return new Response();
-    }
-
-    if (url.pathname === "/download") {
-      return new Response(
-        Date.now().toString().padEnd(20).repeat(10000),
-        {
-          headers: {
-            "Content-Encoding": "identity",
-          },
-        },
-      );
     }
 
     if (url.pathname.replaceAll("/", "") === "") {
@@ -60,11 +75,12 @@ async function serverHandler(req: Request, _info: Deno.ServeHandlerInfo) {
         });
       }
 
-      const userAgent = new UserAgent(ua_header);
+      // const userAgent = new UserAgent(ua_header);
       const result = {
         ip: _info.remoteAddr.hostname,
-        ua: userAgent,
+        ua: ua_header,
         ip_details: get_ip_details(_info.remoteAddr.hostname),
+        providers: config.geoip.providers
       };
 
       // Return json for corresponding content types
@@ -121,7 +137,7 @@ export default function bootstrap() {
         const buf_data = Deno.readFileSync(db_path);
         const buffer = Buffer.from(buf_data);
         geo_dbs.set(dbname, new mmReader<mmResponse>(buffer));
-        log('VERBOSE', `Opened Maxmind DB ${dbname} from '${db_path}'`)
+        log("VERBOSE", `Opened Maxmind DB ${dbname} from '${db_path}'`);
       } catch (error) {
         if (error instanceof Deno.errors.NotFound) {
           log("ERROR", `Maxmind DB file '${db_path}' is not found`);
@@ -135,7 +151,18 @@ export default function bootstrap() {
   // Compile EJS templates
   const template = Deno.readTextFileSync("./templates/index.ejs");
   ejs_templates.set("index", ejs.compile(template, { async: true }));
-  log('VERBOSE', 'Compiled index template')
+  log("VERBOSE", "Compiled index template");
+
+  // Load static files
+  for (const dirEntry of Deno.readDirSync("./static")) {
+    if (dirEntry.isFile) {
+      static_files.set(
+        dirEntry.name,
+        Deno.readFileSync(path_join("./static", dirEntry.name)),
+      );
+      log("VERBOSE", `Loaded static file '${dirEntry.name}'`);
+    }
+  }
 
   // Start HTTP server
   Deno.serve(
