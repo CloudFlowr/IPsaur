@@ -1,119 +1,138 @@
 <html>
-<head>
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css"
-    integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/grids-responsive-min.css" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="/client.css" />
+  <head>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css"
+      integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/grids-responsive-min.css"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/client.css" />
+  </head>
 
-</head>
+  <body>
+    <input id="darkModeSwitcher" type="checkbox" />
+    <div class="pure-g" style="height: 100%">
+      <div class="pure-g pure-menu pure-menu-horizontal">
+        <a href="#" class="pure-menu-heading pure-menu-link"
+          ><img
+            src="/favicon-32x32.png"
+            alt="IP123 logo"
+            width="32px"
+            height="32px"
+        /></a>
+        <ul class="pure-menu-list custom-menu-right">
+          <li class="pure-menu-item">
+            <!-- <button class="pure-button">Share</button> -->
+          </li>
+          <li class="pure-menu-item" style="width: 40px"></li>
+        </ul>
+      </div>
 
-<body>
-  <input id="darkModeSwitcher" type="checkbox" />
-  <div class="pure-g" style="height: 100vh;">
-    <div class="pure-g pure-menu pure-menu-horizontal">
-      <a href="#" class="pure-menu-heading pure-menu-link"><img src="/favicon-32x32.png" alt="IP123 logo" width="32px"
-          height="32px"></a>
-      <ul class="pure-menu-list custom-menu-right">
-        <li class="pure-menu-item">
-          <!-- <button class="pure-button">Share</button> -->
-        </li>
-        <li class="pure-menu-item" style="width: 40px;">
-        </li>
-      </ul>
-    </div>
+      <div class="pure-u-md-1-2">
+        <h1>Your IP address:</h1>
+        <h2 class="card"><%= ip %></h2>
 
-    <div class="pure-u-md-1-2">
-      <h1>Your IP address:</h1>
-      <h2 class="card"><%= ip %></h2>
+        <h1>User agent:</h1>
+        <div class="card"><%= ua %></div>
+      </div>
 
-      <h1>User agent:</h1>
-      <div class="card"><%= ua %></div>
-    </div>
+      <div class="pure-u-md-1-2">
+        <h1>IP Location Details:</h1>
+        <table class="pure-table pure-table-bordered">
+          <tbody>
+            <% if (ip_details.city) { %>
+            <tr>
+              <th>Country</th>
+              <td>
+                <%= ip_details.city.continent.code %> <%=
+                ip_details.city.country.iso_code %> - <%=
+                ip_details.city.country.names.en %>
+              </td>
+            </tr>
+            <tr>
+              <th>City</th>
+              <td><%= ip_details.city.city.names.en %></td>
+            </tr>
+            <% } %> <% if (ip_details.asn) { %>
+            <tr>
+              <th>Provider</th>
+              <td>
+                <%= ip_details.asn.autonomous_system_organization %> (AS<%=
+                ip_details.asn.autonomous_system_number%>)
+              </td>
+            </tr>
+            <% } %> <% if (ip_details.connectionType) { %>
+            <tr>
+              <th>Connection Type</th>
+              <td><%= ip_details.connectionType.connection_type %></td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
 
-    <div class="pure-u-md-1-2">
-      <h1>IP Location Details:</h1>
-      <table class="pure-table pure-table-bordered">
-        <tbody>
-        <% if (ip_details.city) { %>
-          <tr>
-            <th>Country</th>
-            <td>
-              <%= ip_details.city.continent.code %>
-                <%= ip_details.city.country.iso_code %> - <%= ip_details.city.country.names.en %>
-            </td>
-          </tr>
-          <tr>
-            <th>City</th>
-            <td>
-              <%= ip_details.city.city.names.en %>
-            </td>
-          </tr>
-        <% } %>
-        <% if (ip_details.asn) { %>
-          <tr>
-            <th>Provider</th>
-            <td>
-              <%= ip_details.asn.autonomous_system_organization %> (AS<%= ip_details.asn.autonomous_system_number%>)
-            </td>
-          </tr>
-        <% } %>
-        <% if (ip_details.connectionType) { %>
-          <tr>
-            <th>Connection Type</th>
-            <td>
-              <%= ip_details.connectionType.connection_type %>
-            </td>
-          </tr>
-        <% } %>
-        </tbody>
-      </table>
-
-      <% if (providers.maxmind) { %>
-        <div style="font-size: small;">
+        <% if (providers.maxmind) { %>
+        <div style="font-size: small">
           This product includes GeoLite2 data created by MaxMind, available from
-          <a target="_blank" href="https://www.maxmind.com">https://www.maxmind.com</a>.
+          <a target="_blank" href="https://www.maxmind.com"
+            >https://www.maxmind.com</a
+          >.
         </div>
-      <% } %>
-      <% if (providers.dbip) { %>
-        <div style="font-size: small;">
-          <a target="_blank" href='https://db-ip.com'>IP Geolocation by DB-IP</a>
+        <% } %> <% if (providers.dbip) { %>
+        <div style="font-size: small">
+          <a target="_blank" href="https://db-ip.com"
+            >IP Geolocation by DB-IP</a
+          >
         </div>
-      <% } %>
+        <% } %>
+      </div>
+
+      <div class="pure-u-md-2-2" style="width: 100%">
+        <h1>Network Bandwidth Test</h1>
+        <div class="table-scroller">
+          <table class="pure-table" style="width: 100%">
+            <thead>
+              <tr>
+                <th>Region</th>
+                <th>Round-Trip Time</th>
+                <th>Download Speed</th>
+                <th>Upload Speed</th>
+                <th style="text-align: center">
+                  <button id="test_all" class="pure-button pure-button-primary">
+                    Test All
+                  </button>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Primary</td>
+                <td><span id="rtt_primary">Testing</span></td>
+                <td><span id="dl_primary">Testing</span></td>
+                <td><span id="ul_primary">Testing</span></td>
+                <td style="text-align: center">
+                  <button
+                    id="test_primary"
+                    class="pure-button pure-button-primary"
+                  >
+                    Test
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
+  </body>
 
-    <div class="pure-u-md-2-2" style="width:100%">
-      <h1>Network Bandwidth Test</h1>
-      <table class="pure-table">
-        <thead>
-          <tr>
-            <th>Region</th>
-            <th>Round-Trip Time</th>
-            <th>Download Speed</th>
-            <th>Upload Speed</th>
-            <th style="text-align: center;"><button id="test_all" class="pure-button pure-button-primary">Test All</button></th>
-        </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Primary</td>
-            <td><span id="rtt_primary"></span></td>
-            <td><span id="dl_primary"></span></td>
-            <td><span id="ul_primary"></span></td>
-            <td style="text-align: center;"><button id="test_primary"
-              class="pure-button pure-button-primary">Test</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</body>
-
-<script src="/client.js"></script>
-
+  <script src="/client.js"></script>
 </html>

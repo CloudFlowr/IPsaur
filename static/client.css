@@ -1,34 +1,29 @@
-
 :root {
   --bg-color: #ffffff75;
   --font-color: #121212;
   --em-font-color: #121212;
   --border-color: #218095;
-  --gradient-style: radial-gradient(
-    circle,
-    #f6ff1c,
-    #ffdc00,
-    #ffb800,
-    #ff951a
-  );
+  --gradient-style: radial-gradient(circle,
+      #f6ff1c,
+      #ffdc00,
+      #ffb800,
+      #ff951a);
   --gradient-size: 2px;
   --gradient-shadow: #ffb800;
 }
 
 input:checked,
-input:checked + * {
+input:checked+* {
   --bg-color: #121212;
   --font-color: #ffffff75;
   --em-font-color: #ffffff87;
   --border-color: #c9e3e9;
-  --gradient-style: radial-gradient(
-    circle,
-    #ccd325,
-    #d3d84b,
-    #dadd68,
-    #e0e183,
-    #e6e69c
-  );
+  --gradient-style: radial-gradient(circle,
+      #ccd325,
+      #d3d84b,
+      #dadd68,
+      #e0e183,
+      #e6e69c);
   --gradient-size: 2px;
   --gradient-shadow: #fff;
 }
@@ -61,37 +56,48 @@ h1 {
   color: var(--em-font-color);
 }
 
-body{
-  min-width: fit-content;
+body {
   margin: 0;
   padding: 0;
   font-family: 'Rubik', -apple-system, BlinkMacSystemFont,
     "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans",
-    "Droid Sans", "Helvetica Neue", sans-serif;;
+    "Droid Sans", "Helvetica Neue", sans-serif;
+  ;
 }
+
+
+/* @media (prefers-color-scheme: light) {
+  body {
+    background-color: black;
+  }
+} */
+
+.pure-table {
+  width: 100%;
+}
+
 .pure-g {
   padding: 5px;
 }
+
 .card {
   padding: 5px;
   margin: 5px;
   border: 1px solid #CCCCCC;
   border-radius: 5px;
 }
+
 .pure-button {
   border-radius: .5em;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
   font-size: 85%;
 }
+
 .custom-menu-right {
   text-align: right;
   flex: auto;
   padding: 10px;
-}
-.pure-table {
-  width: 100%;
-  /* border-color: var(--border-color); */
 }
 
 .pure-table th {
@@ -99,4 +105,10 @@ body{
   border-bottom-style: inset;
   /* border-color: var(--border-color); */
   /* background-color: var(--bg-color); */
+}
+
+@media screen and (max-width:550px) {
+  .table-scroller {
+    overflow-x: scroll;
+  }
 }

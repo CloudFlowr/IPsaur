@@ -1,6 +1,4 @@
-const regions = ['primary'];
-const btn_test_all = document.getElementById('test_all');
-btn_test_all.addEventListener('click', async () => {
+async function triggerTest() {
   btn_test_all.classList.add('pure-button-disabled');
   for (const region of regions) {
     const btn = document.getElementById('test_' + region);
@@ -14,7 +12,18 @@ btn_test_all.addEventListener('click', async () => {
     }
   }
   btn_test_all.classList.remove('pure-button-disabled');
+}
+
+const regions = ['primary'];
+const btn_test_all = document.getElementById('test_all');
+
+btn_test_all.addEventListener('click', async () => {
+  await triggerTest();
 })
+
+window.onload = async function () {
+  await triggerTest();
+};
 
 for (const region of regions) {
   const btn = document.getElementById('test_' + region);
@@ -27,7 +36,6 @@ for (const region of regions) {
     }
   })
 }
-
 async function testRegionAsync(region) {
   const rtt_el = document.getElementById('rtt_' + region);
   const dl_el = document.getElementById('dl_' + region);
@@ -87,7 +95,7 @@ async function testDownload(region, length) {
   const rsp_time = Number.parseInt(rsp.headers.get('x-response-time')) || 0;
   const rsp_length = rsp_blob.byteLength;
   const time = end_ts - start_ts - rsp_time;
-  const speed = Math.round(rsp_length *8 / (time / 1000));
+  const speed = Math.round(rsp_length * 8 / (time / 1000));
   return {
     blobsize: rsp_length,
     time: time,
