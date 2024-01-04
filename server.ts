@@ -1,6 +1,5 @@
 import config from "./config.ts";
 import { STATUS_CODE } from "std/http/status.ts";
-// import { UserAgent } from "std/http/user_agent.ts";
 import { Buffer } from "node:buffer";
 
 import { join as path_join } from "std/path/join.ts";
@@ -14,10 +13,9 @@ function log(level: LogLevel, ...message: (number | string | object)[]) {
   console.log(new Date().toJSON(), level, ...message);
 }
 
+const req_cache = new Map<string, number>();
 const geo_dbs = new Map<string, mmReader<mmResponse>>();
-
 const ejs_templates = new Map<string, ejs.AsyncTemplateFunction>();
-
 const static_files = new Map<string, Uint8Array>();
 
 function get_ip_details(ip: string) {
@@ -31,23 +29,67 @@ function get_ip_details(ip: string) {
   return result;
 }
 
-async function serverHandler(req: Request, _info: Deno.ServeHandlerInfo) {
-  const url = new URL(req.url);
+function rate_limit(ip_url: string): boolean {
+  const limit_ms = 1000 * 1; // 1 second
+  const cur_ts = Date.now();
+  const last_visit = req_cache.get(ip_url) || 0;
+  req_cache.set(ip_url, cur_ts);
+  if (cur_ts - last_visit < limit_ms) {
+    return true;
+  }
+  return false;
+}
 
-  const static_content = static_files.get(url.pathname.replace(/\/*/, ""));
+async function serverHandler(
+  req: Request,
+  _info: Deno.ServeHandlerInfo,
+): Promise<Response> {
+  const url = new URL(req.url);
+  const url_pathname = url.pathname.toLowerCase();
+  const req_method = req.method.toLowerCase();
+  const req_ip = _info.remoteAddr.hostname;
+  const ua_header = req.headers.get("user-agent") ?? "";
+  const content_type = req.headers.get("content-type") ?? "";
+  const max_bw_test_length = 10000000;
+
+  if (
+    rate_limit(
+      req_ip + " " + req_method + " " + url_pathname.replaceAll("/", ""),
+    )
+  ) {
+    return new Response("Too many requests from your IP", {
+      status: STATUS_CODE.TooManyRequests,
+    });
+  }
+
+  const static_content = static_files.get(url_pathname.replace(/\/*/, ""));
   if (static_content) return new Response(static_content);
 
-  if (url.pathname === "/bandwidth") {
-    if (req.method.toLowerCase() === "get") {
+  if (url_pathname === "/bandwidth") {
+    if (req_method === "get") {
       const length = Number.parseInt("" + url.searchParams.get("length")) ||
         100000;
-      const sample = Date.now().toString() + crypto.randomUUID();
+      if (length > max_bw_test_length) {
+        return new Response("Request size is too big", {
+          status: STATUS_CODE.ContentTooLarge,
+        });
+      }
+      const sample = crypto.randomUUID();
       return new Response(
-        "".padEnd(length, sample),
+        (Date.now().toString() + " ").padEnd(length, sample),
         { headers: { "Content-Encoding": "identity" } },
       );
     }
-    if (req.method.toLowerCase() === "post") {
+    if (req_method === "post") {
+      req.headers.get("content-length");
+      const data_length =
+        Number.parseInt(req.headers.get("content-length") || "") || 0;
+      if (data_length > max_bw_test_length) {
+        return new Response("Request size is too big", {
+          status: STATUS_CODE.ContentTooLarge,
+        });
+      }
+
       await req.arrayBuffer();
       return new Response(undefined, { status: STATUS_CODE.Accepted });
       // const ab = await req.arrayBuffer();
@@ -55,18 +97,14 @@ async function serverHandler(req: Request, _info: Deno.ServeHandlerInfo) {
     }
   }
 
-  if (req.method.toLowerCase() === "get") {
-    if (url.pathname === "/empty") {
+  if (req_method === "get") {
+    if (url_pathname === "/empty") {
       // Empty reponsse used to measure round-trip time (aka latency).
       return new Response();
     }
 
-    if (url.pathname.replaceAll("/", "") === "") {
+    if (url_pathname.replaceAll("/", "") === "") {
       // Default page
-
-      const ua_header = req.headers.get("user-agent") ?? "";
-      const content_type = req.headers.get("content-type") ?? "";
-
       // for curl - just return IP address
       if (ua_header.startsWith("curl/") && content_type === "") {
         return new Response(_info.remoteAddr.hostname, {
@@ -80,7 +118,7 @@ async function serverHandler(req: Request, _info: Deno.ServeHandlerInfo) {
         ip: _info.remoteAddr.hostname,
         ua: ua_header,
         ip_details: get_ip_details(_info.remoteAddr.hostname),
-        providers: config.geoip.providers
+        providers: config.geoip.providers,
       };
 
       // Return json for corresponding content types
@@ -90,7 +128,6 @@ async function serverHandler(req: Request, _info: Deno.ServeHandlerInfo) {
           { status: STATUS_CODE.OK },
         );
       }
-
       // Return rendered page for browser
       const render_fn = ejs_templates.get("index");
       if (render_fn) {
@@ -99,15 +136,13 @@ async function serverHandler(req: Request, _info: Deno.ServeHandlerInfo) {
           status: STATUS_CODE.OK,
         });
       }
-
       // Fallback - return plaintext
       return new Response(Deno.inspect(result), {
-        headers: { "content-type": "text/plain" },
+        headers: { "content-type": "text/plain;charset=UTF-8" },
         status: STATUS_CODE.OK,
       });
     }
   }
-
   // Route not found
   return new Response("Hello, I am IP123", { status: STATUS_CODE.NotFound });
 }
