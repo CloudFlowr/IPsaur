@@ -21,9 +21,6 @@ btn_test_all.addEventListener('click', async () => {
   await triggerTest();
 })
 
-window.onload = async function () {
-  await triggerTest();
-};
 
 for (const region of regions) {
   const btn = document.getElementById('test_' + region);
