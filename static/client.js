@@ -112,7 +112,7 @@ async function testUpload(region, length) {
       "Accept-Encoding": ""
     }
   })
-  //  await rsp.arrayBuffer();
+
   const end_ts = Date.now();
   const rsp_time = Number.parseInt(rsp.headers.get('x-response-time')) || 0;
   const time = end_ts - start_ts;

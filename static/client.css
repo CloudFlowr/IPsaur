@@ -66,13 +66,6 @@ body {
   ;
 }
 
-
-/* @media (prefers-color-scheme: light) {
-  body {
-    background-color: black;
-  }
-} */
-
 .pure-table {
   width: 100%;
 }
