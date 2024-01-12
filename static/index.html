@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>IPsaur</title>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/client.css" />
+  <script src="/client.js"></script>
+
+
+  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hack-font@3/build/web/hack-subset.css"> -->
+
+  <!-- <style>
+    body {
+      background-color: #222;
+    }
+
+    .box {
+      font-family: monospace;
+      color: #ccc;
+      background-color: #111;
+      padding: 10px;
+      margin: 10px;
+      border-radius: 5px;
+      font-size: 18px;
+    }
+
+    .terminal {
+      white-space: pre-wrap;
+      /* font-family: monospace;
+      padding: 10px;
+      margin: 10px;
+      border-radius: 5px;
+      font-size: 16px; */
+    }
+
+    .menu {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .menu div * {
+      /* padding-top: 10px;
+      padding-bottom: 10px; */
+      margin-left: 5px;
+      margin-right: 5px;
+      white-space: nowrap;
+    }
+
+    .success {
+      color: #4caf50;
+      /* Green */
+    }
+
+    .error {
+      color: #f44336;
+      /* Red */
+    }
+
+    .warning {
+      color: #ff9800;
+      /* Orange */
+    }
+
+    .bold {
+      font-weight: bold;
+    }
+
+    .italic {
+      font-style: italic;
+    }
+
+    .underline {
+      text-decoration: underline;
+    }
+
+    .black {
+      color: #000000;
+    }
+
+    .green {
+      color: green;
+    }
+
+    .red {
+      color: red;
+    }
+
+    .yellow {
+      color: yellow;
+    }
+
+    .blue {
+      color: blue;
+    }
+
+    .magenta {
+      color: magenta;
+    }
+
+    .cyan {
+      color: cyan;
+    }
+
+    .grey {
+      color: grey;
+    }
+
+    .white {
+      color: white;
+    }
+
+    a {
+      color: #ddd;
+      background-color: #111;
+    }
+
+    a:hover {
+      color: #111;
+      background-color: #ddd;
+    }
+
+    @-webkit-keyframes blinker {
+      from {
+        opacity: 1.0;
+      }
+
+      to {
+        opacity: 0.0;
+      }
+    }
+
+    #share_block {
+      border-color: #ddd;
+      border-style: double;
+      border-width: 5px;
+    }
+
+    #data_sharing_conditions {
+      border-color: #ddd;
+      border-style: dashed;
+      border-width: 2px;
+      padding: 5px;
+      font-size: 0.8em;
+    }
+
+    #share_accepted {
+      accent-color: #111;
+    }
+
+    .blink {
+      text-decoration: blink;
+      -webkit-animation-name: blinker;
+      -webkit-animation-duration: 0.6s;
+      -webkit-animation-iteration-count: infinite;
+      -webkit-animation-timing-function: ease-in-out;
+      -webkit-animation-direction: alternate;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      20%,
+      50%,
+      80%,
+      100% {
+        transform: translateY(0);
+      }
+
+      40% {
+        transform: translateY(-30px);
+      }
+
+      60% {
+        transform: translateY(-15px);
+      }
+    }
+
+    .bounce {
+      animation: bounce 2s ease;
+    }
+  </style> -->
+</head>
+
+<body>
+
+  <img id="logo" class="bounce" style="position: absolute;" src="logo.png" />
+  <div style="padding-left: 60px;" class="box menu"><span class="bold"><span
+        style="font-size: 20px;">IPsaur</span></span>
+    <div class="bold"><span>[<a href="">To Clipboard</a>]</span> <span>[<a href="javascript:toggleShareBlock()">Share
+          results</a>]</span>
+      <span>[<a href="">Github</a>]</span>
+      <span>[<a href="">Donate</a>]</span>
+    </div>
+  </div>
+  <div id="share_block" style="display: none;" class="box">The test results will be shared.<br>
+    Please read and accept the data sharing terms and conditions below.<br>
+    <div id="data_sharing_conditions">
+      Test results will be stored on our servers.<br><br>
+      Data will be automatically removed from our servers after 30 days.<br><br>
+      You will receive the DeleteKey to delete the shared data. Please keep it secure and don't share with others. You
+      won't be able to recover the DeleteKey if it is lost.<br><br>
+      [<input id="share_accepted" type="checkbox" onchange="shareAccepted(this.checked)" />]<label for="share_accepted">
+        I accept the data sharing terms and conditions.</label>
+    </div>
+    <div id="do_share" style="display: none;">
+      Comment (optional):<br><textarea
+        style="width: 100%; height: 5em; background-color: #111; color: #ddd; font-size: 14px;"></textarea><br>
+      [<a href="javascript:doShare()">Give me the URL and password</a>]<br><br>
+
+    </div>
+    <div id="share_data" style="display: none;"><br>
+      Url: <span id="share_url" class="underline" style="overflow-wrap: anywhere;">https://share.url/s/base64hash</span>
+      <span>[<a>Clip</a>]</span><br>
+      DeleteKey: <span id="share_password" class="grey" style="overflow-wrap: anywhere;">P@$$w0rd</span>
+      <span>[<a>Clip</a>]</span><br>
+    </div>
+
+  </div>
+  <div id="error_block" class="box" style="display: none;"></div>
+  <div id="terminal" class="box terminal"></div>
+  <div id="nettest" class="box"><span class="magenta bold">Network Bandwidth Test</span><br>
+    <div class="terminal"> Round-Trip Time: <span id="rtt_primary"></span></div>
+    <div class="terminal"> Download Speed: <span id="dl_primary"></span></div>
+    <div class="terminal"> Upload Speed: <span id="ul_primary"></span></div>
+  </div>
+  <div id="test_timestamp" class="box"></div>
+</body>
+
+<script>
+  const test_results = {
+    ip: {},
+    nettest: {},
+    browsertimeutc: '',
+    browsertimelocal: '',
+  }
+  window.addEventListener('load', async () => {
+
+    const terminal = document.getElementById('terminal');
+    try{
+    const rsp = await fetch('/json');
+    const ip_data = await rsp.json()
+    test_results.ip = ip_data;
+    let text = `\x1b[1;35mIP Address\x1b[0m  \x1b[1;4;32m${ip_data.ip}\x1b[0m\n`;
+    text += `\x1b[1;33mUser agent\x1b[0m  ${ip_data.ua}\n`;
+
+    if (ip_data.ip_details.asn || ip_data.ip_details.city) {
+      text +=
+        "\n\x1b[1;36mIP Geolocation Details\x1b[0m Provided by: ";
+      if (ip_data.providers.dbip) text += "DB-IP (https://db-ip.com) ";
+      if (ip_data.providers.maxmind) {
+        text += "MaxMind (https://www.maxmind.com)";
+      }
+      text += "\n";
+
+      if (ip_data.ip_details.asn) {
+        text +=
+          `  Provider: ${ip_data.ip_details.asn.autonomous_system_organization} (AS${ip_data.ip_details.asn?.autonomous_system_number})\n`;
+      }
+      if (ip_data.ip_details.city) {
+        text +=
+          `  Country:  ${ip_data.ip_details.city.continent?.code} ${ip_data.ip_details.city.country?.iso_code} - ${ip_data.ip_details.city.country?.names.en}\n`;
+        text +=
+          `  City:     ${ip_data.ip_details.city.city?.names.en}\n`;
+      }
+    }
+    text += "\nServer time: " + new Date(ip_data.servertime).toUTCString() + "\n";
+    printTextEl(terminal, text)
+    test_results.nettest = await testBandwidth('primary');
+    const ts = new Date();
+    const e = document.getElementById('test_timestamp');
+    if (e) e.innerText = 'Browser time: ' + ts.toString();
+    test_results.browsertimeutc = ts.toJSON();
+    test_results.browsertimelocal = ts.toString();
+  } catch (err) {
+    const err_block = document.getElementById('error_block') || terminal;
+    err_block.style.display = 'block'
+    printTextEl(err_block, `\x1b[1mOoops... There is something happened in IPsaur's land.\x1b[0m\n\n\x1b[1;31mError details:\x1b[0m\n${err.stack}`)
+  }
+
+
+  })
+
+</script>
+
+</html>

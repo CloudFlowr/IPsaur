@@ -4,9 +4,42 @@ import { Buffer } from "node:buffer";
 
 import { join as path_join } from "std/path/join.ts";
 
-import maxmind, { Reader as mmReader, Response as mmResponse } from "maxmind";
+import maxmind, {
+  AsnResponse,
+  CityResponse,
+  ConnectionTypeResponse,
+  CountryResponse,
+  IspResponse,
+  Reader as mmReader,
+  Response as mmResponse,
+} from "maxmind";
 
-import ejs from "ejs";
+// import ejs from "ejs";
+
+const logo = `
+                          ▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+                        ▓▓▓▓  ▓▓▓▓▓▓▓▓▓▓▓▓
+                        ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+                        ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+                        ▓▓▓▓▓▓▓▓
+                        ▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+                      ▓▓▓▓▓▓▓▓
+                    ▓▓▓▓▓▓▓▓▓▓
+                  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  ▓▓            ▓▓▓▓▓▓▓▓▓▓▓▓▓▓  ▓▓
+  ▓▓▓▓        ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  ▓▓▓▓▓▓    ▓▓▓▓  ▓▓      ▓▓▓▓
+  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓  ▓▓  ▓▓  ▓▓▓▓
+    ▓▓▓▓▓▓▓▓▓▓▓▓  ▓▓      ▓▓
+      ▓▓▓▓▓▓▓▓▓▓  ▓▓  ▓▓▓▓▓▓
+        ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+          ▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+            ▓▓▓▓▓▓  ▓▓▓▓       https://github.com/cloudflowr/ipsaur
+            ▓▓▓▓     ▓▓▓
+            ▓▓        ▓▓       https://paypal.com/donate
+            ▓▓▓▓      ▓▓▓▓
+
+`;
 
 type LogLevel = "FATAL" | "ERROR" | "INFO" | "VERBOSE" | "DEBUG";
 function log(level: LogLevel, ...message: (number | string | object)[]) {
@@ -15,10 +48,18 @@ function log(level: LogLevel, ...message: (number | string | object)[]) {
 
 const req_cache = new Map<string, number>();
 const geo_dbs = new Map<string, mmReader<mmResponse>>();
-const ejs_templates = new Map<string, ejs.AsyncTemplateFunction>();
+// const ejs_templates = new Map<string, ejs.AsyncTemplateFunction>();
 const static_files = new Map<string, Uint8Array>();
 
-function get_ip_details(ip: string) {
+type IpDetails = {
+  asn?: AsnResponse | undefined;
+  city?: CityResponse | undefined;
+  country?: CountryResponse | undefined;
+  isp?: IspResponse | undefined;
+  connectionType?: ConnectionTypeResponse | undefined;
+};
+
+function get_ip_details(ip: string): IpDetails {
   maxmind.validate(ip);
   const result = {};
   geo_dbs.forEach(
@@ -99,27 +140,71 @@ async function serverHandler(
 
   if (req_method === "get") {
     if (url_pathname === "/empty") {
-      // Empty reponsse used to measure round-trip time (aka latency).
+      // Empty response used to measure round-trip time (aka latency).
       return new Response();
+    }
+
+    if (url_pathname === "/ip") {
+      return new Response(_info.remoteAddr.hostname, {
+        headers: { "content-type": "text/plain;charset=UTF-8" },
+        status: STATUS_CODE.OK,
+      });
+    }
+
+    const result = {
+      ip: _info.remoteAddr.hostname,
+      ua: ua_header,
+      ip_details: get_ip_details(_info.remoteAddr.hostname),
+      providers: config.geoip.providers,
+      servertime: new Date().toJSON(),
+    };
+
+    if (url_pathname === "/json") {
+      return new Response(JSON.stringify(result), {
+        headers: { "content-type": "text/plain;charset=UTF-8" },
+        status: STATUS_CODE.OK,
+      });
     }
 
     if (url_pathname.replaceAll("/", "") === "") {
       // Default page
-      // for curl - just return IP address
-      if (ua_header.startsWith("curl/") && content_type === "") {
-        return new Response(_info.remoteAddr.hostname, {
+
+      // for curl or text/plain - return ansi-colored output
+      if (
+        content_type === "text/plain" ||
+        (ua_header.startsWith("curl/") && content_type === "")
+      ) {
+        const no_logo = url.searchParams.has("nologo") ||
+          content_type === "text/plain";
+        let rsp_text =
+          `\x1b[1;35mIP Address\x1b[0m  \x1b[1;4;32m${result.ip}\x1b[0m
+\x1b[1;33mUser agent\x1b[0m  ${result.ua}`;
+        if (result.ip_details.asn || result.ip_details.city) {
+          rsp_text +=
+            "\n\n\x1b[1;36mIP Geolocation Details\x1b[0m Provided by: ";
+          if (result.providers.dbip) rsp_text += "DB-IP (https://db-ip.com) ";
+          if (result.providers.maxmind) {
+            rsp_text += "MaxMind (https://www.maxmind.com)";
+          }
+
+          if (result.ip_details.asn) {
+            rsp_text +=
+              `\n  Provider: ${result.ip_details.asn.autonomous_system_organization} (AS${result.ip_details.asn?.autonomous_system_number})`;
+          }
+          if (result.ip_details.city) {
+            rsp_text +=
+              `\n  Country:  ${result.ip_details.city.continent?.code} ${result.ip_details.city.country?.iso_code} - ${result.ip_details.city.country?.names.en}`;
+            rsp_text +=
+              `\n  City:     ${result.ip_details.city.city?.names.en}`;
+          }
+        }
+        rsp_text += "\n\nServer time: " + new Date().toUTCString() + "\n";
+
+        return new Response((no_logo ? "" : logo) + rsp_text, {
           headers: { "content-type": "text/plain;charset=UTF-8" },
           status: STATUS_CODE.OK,
         });
       }
-
-      // const userAgent = new UserAgent(ua_header);
-      const result = {
-        ip: _info.remoteAddr.hostname,
-        ua: ua_header,
-        ip_details: get_ip_details(_info.remoteAddr.hostname),
-        providers: config.geoip.providers,
-      };
 
       // Return json for corresponding content types
       if (content_type === "application/json" || content_type === "text/json") {
@@ -128,23 +213,22 @@ async function serverHandler(
           { status: STATUS_CODE.OK },
         );
       }
-      // Return rendered page for browser
-      const render_fn = ejs_templates.get("index");
-      if (render_fn) {
-        return new Response(await render_fn(result), {
-          headers: { "content-type": "text/html;charset=UTF-8" },
-          status: STATUS_CODE.OK,
-        });
-      }
-      // Fallback - return plaintext
-      return new Response(Deno.inspect(result), {
-        headers: { "content-type": "text/plain;charset=UTF-8" },
-        status: STATUS_CODE.OK,
-      });
+
+      // // Return rendered page for browser
+      // const render_fn = ejs_templates.get("index");
+      // if (render_fn) {
+      //   return new Response(await render_fn(result), {
+      //     headers: { "content-type": "text/html;charset=UTF-8" },
+      //     status: STATUS_CODE.OK,
+      //   });
+      // }
+
+      const static_content = static_files.get("index.html");
+      if (static_content) return new Response(static_content);
     }
   }
-  // Route not found
-  return new Response("Hello, I am IP123", { status: STATUS_CODE.NotFound });
+  // Fallback - Route not found
+  return new Response("Hello, I am IPsaur", { status: STATUS_CODE.NotFound });
 }
 
 export default function bootstrap() {
@@ -183,10 +267,10 @@ export default function bootstrap() {
     }
   }
 
-  // Compile EJS templates
-  const template = Deno.readTextFileSync("./templates/index.ejs");
-  ejs_templates.set("index", ejs.compile(template, { async: true }));
-  log("VERBOSE", "Compiled index template");
+  // // Compile EJS templates
+  // const template = Deno.readTextFileSync("./templates/index.ejs");
+  // ejs_templates.set("index", ejs.compile(template, { async: true }));
+  // log("VERBOSE", "Compiled index template");
 
   // Load static files
   for (const dirEntry of Deno.readDirSync("./static")) {

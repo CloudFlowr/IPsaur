@@ -1,5 +1,5 @@
 function getConfiguredServerPort() {
-  const value = parseInt(Deno.env.get("PORT") || "8000") || 8000;
+  const value = parseInt(Deno.env.get("PORT") || "8080") || 8080;
   if (value < 1 || value > 65535) {
     throw new Deno.errors.NotSupported(`Port ${value} is not allowed`);
   }
