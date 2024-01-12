@@ -2,6 +2,8 @@ import config from "./config.ts";
 import { STATUS_CODE } from "std/http/status.ts";
 import { Buffer } from "node:buffer";
 
+import { encodeHex } from "std/encoding/hex.ts";
+import { encodeBase64 } from "std/encoding/base64.ts";
 import { join as path_join } from "std/path/join.ts";
 
 import maxmind, {
@@ -138,6 +140,107 @@ async function serverHandler(
     }
   }
 
+  if (url_pathname === "/s") {
+    if (req_method === "get") {
+      const share_id = url.search;
+      if (share_id.length > 0) {
+        try {
+          const shared_json = await Deno.readTextFile(
+            path_join(config.shared_dir, share_id + ".json"),
+          );
+          const shared_obj = JSON.parse(shared_json);
+          if (
+            shared_obj.browsertimeutc &&
+            (new Date(shared_obj.browsertimeutc).valueOf() >
+              (Date.now() - 1000 * 60 * 60 * 24 * 30)) // last 30 days
+          ) {
+            return new Response(shared_json, {
+              headers: { "content-type": "application/json;charset=UTF-8" },
+              status: STATUS_CODE.OK,
+            });
+          }
+
+          await Deno.remove(path_join(config.shared_dir, share_id + ".json"));
+          await Deno.remove(
+            path_join(config.shared_dir, share_id + ".deletekey"),
+          );
+        } catch {
+          // pass
+        }
+        return Response.redirect("/", STATUS_CODE.TemporaryRedirect);
+      }
+    }
+    if (req_method === "post") {
+      const host_header = req.headers.get("host");
+      // const origin_header = req.headers.get("origin");
+      const ref_header = req.headers.get("referer");
+      const server_base_url = (host_header && ref_header &&
+          ref_header.endsWith("://" + host_header + "/"))
+        ? ref_header
+        : "";
+      if (server_base_url !== "") {
+        try {
+          const body_ab = await req.arrayBuffer();
+          const share_id = encodeBase64(
+            await crypto.subtle.digest("SHA-256", body_ab),
+          );
+          const delete_key = encodeBase64(
+            await crypto.subtle.digest("SHA-1", body_ab),
+          );
+
+          await Deno.writeFile(
+            path_join(config.shared_dir, share_id + ".json"),
+            new Uint8Array(body_ab),
+            { createNew: true },
+          );
+          await Deno.writeTextFile(
+            path_join(config.shared_dir, share_id + ".deletekey"),
+            delete_key,
+            { createNew: true },
+          );
+          return new Response(
+            JSON.stringify({
+              url: `${server_base_url}s?${share_id}`,
+              delete_key: delete_key,
+            }),
+          );
+        } catch (err) {
+          // if (err instanceof Deno.errors.AlreadyExists)
+          //
+        }
+      }
+      return new Response("Bad request.", { status: STATUS_CODE.BadRequest });
+    }
+    if (req_method === "delete") {
+      const share_id = url.search;
+      if (share_id.length > 0) {
+        try {
+          const req_delete_key = await req.text();
+          const delete_key = await Deno.readTextFile(
+            path_join(config.shared_dir, share_id + ".deletekey"),
+          );
+          if (delete_key === req_delete_key) {
+            await Deno.remove(
+              path_join(config.shared_dir, share_id + ".deletekey"),
+            );
+            await Deno.remove(
+              path_join(config.shared_dir, share_id + ".json"),
+            );
+          }
+          return new Response(undefined, {
+            status: STATUS_CODE.NoContent,
+          });
+        } catch {
+          return new Response("Bad request", {
+            status: STATUS_CODE.BadRequest,
+          });
+          // pass
+        }
+        // return Response.redirect("/", STATUS_CODE.TemporaryRedirect);
+      }
+    }
+  }
+
   if (req_method === "get") {
     if (url_pathname === "/empty") {
       // Empty response used to measure round-trip time (aka latency).
@@ -161,7 +264,7 @@ async function serverHandler(
 
     if (url_pathname === "/json") {
       return new Response(JSON.stringify(result), {
-        headers: { "content-type": "text/plain;charset=UTF-8" },
+        headers: { "content-type": "application/json;charset=UTF-8" },
         status: STATUS_CODE.OK,
       });
     }

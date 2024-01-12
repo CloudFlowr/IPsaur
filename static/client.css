@@ -79,11 +79,29 @@ body {
 a {
   color: #ddd;
   background-color: #111;
+  vertical-align: middle;
+}
+
+a img {
+  vertical-align: text-top;
 }
 
 a:hover {
   color: #111;
   background-color: #ddd;
+}
+
+a:hover img {
+  filter: invert();
+}
+
+.blink {
+  text-decoration: blink;
+  -webkit-animation-name: blinker;
+  -webkit-animation-duration: 0.6s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: ease-in-out;
+  -webkit-animation-direction: alternate;
 }
 
 @-webkit-keyframes blinker {
@@ -120,15 +138,6 @@ a:hover {
   border-color: #ff0000;
   border-width: 3px;
   overflow-wrap: break-word;
-}
-
-.blink {
-  text-decoration: blink;
-  -webkit-animation-name: blinker;
-  -webkit-animation-duration: 0.6s;
-  -webkit-animation-iteration-count: infinite;
-  -webkit-animation-timing-function: ease-in-out;
-  -webkit-animation-direction: alternate;
 }
 
 @keyframes bounce {
