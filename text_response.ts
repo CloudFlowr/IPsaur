@@ -1,4 +1,4 @@
-import { IpData } from "./server_handler.ts";
+import { IpData, NetTestData } from "./server_handler.ts";
 import { ConfigLink } from "./config.ts";
 
 const ANSI_COLOR_CODE = {
@@ -53,7 +53,7 @@ export function printLogo(
 }
 
 export function getTextResponse(
-  data: IpData & { browsertimelocal?: string; comment?: string; browsertimeutc?: string },
+  data: IpData,
   with_logo: boolean,
   links: ConfigLink[] = [],
 ): string {
@@ -100,19 +100,31 @@ export function getTextResponse(
     rsp_text += wrapWithColorCode("Browser time (Local): ", [ANSI_COLOR_CODE.bold, ANSI_COLOR_CODE.cyan]) +
       data.browsertimelocal + "\n";
   }
+  if (data.nettest) {
+    rsp_text += wrapWithColorCode("\nNetwork Bandwidth Test", [ANSI_COLOR_CODE.bold, ANSI_COLOR_CODE.magenta]) + "\n";
+    rsp_text += "Round-Trip Time: " + (data.nettest.round_trip_time ? (data.nettest.round_trip_time + "ms") : "---") +
+      "\n";
+    rsp_text += "Download Speed: " + render_speed(data.nettest.download) + "\n";
+    rsp_text += "Upload Speed: " + render_speed(data.nettest.upload) + "\n";
+  }
+
   if (data.comment) {
     rsp_text += "\n" + wrapWithColorCode("Comments: ", [ANSI_COLOR_CODE.bold]) + "\n" + data.comment + "\n";
+  }
+
+  if (data.saved_error && data.saved_error.length > 0) {
+    rsp_text += "\n" + wrapWithColorCode("Saved Error: ", [ANSI_COLOR_CODE.bold, ANSI_COLOR_CODE.red]) + "\n" + data.saved_error + "\n";
   }
   return rsp_text;
 }
 
-export function render_speed(data: { sz: number; s: number; t: number; rt: number }) {
+export function render_speed(data: NetTestData | undefined | null) {
   if (data) {
-    let speed_h = "" + data.s;
-    if (data.s > 1000) speed_h = `${data.s / 1000}K`;
-    if (data.s > 1000000) speed_h = `${Math.round(data.s / 1000) / 1000}M`;
-    if (data.s > 1000000000) speed_h = `${Math.round(data.s / 1000000) / 1000}G`;
-    return `${speed_h}bit/s (${data.sz / 1000}kB / ${data.t / 1000}s)`;
+    let speed_h = "" + data.speed;
+    if (data.speed > 1000) speed_h = `${data.speed / 1000}K`;
+    if (data.speed > 1000000) speed_h = `${Math.round(data.speed / 1000) / 1000}M`;
+    if (data.speed > 1000000000) speed_h = `${Math.round(data.speed / 1000000) / 1000}G`;
+    return `${speed_h}bit/s (${data.size / 1000}kB / ${data.time / 1000}s)`;
   } else {
     return "---";
   }

@@ -24,13 +24,7 @@
           clipboard</a>]</span>
     </div>
   </div>
-  <div id="error_block" class="box" style="display: none"></div>
   <div id="terminal" class="box terminal"></div>
-  <div id="nettest" class="box"><span class="magenta bold">Network Bandwidth Test</span><br />
-    Round-Trip Time: <span id="rtt_primary">---</span><br />
-    Download Speed: <span id="dl_primary">---</span><br />
-    Upload Speed: <span id="ul_primary">---</span><br />
-  </div>
   <div id="links_block" class="box menu">
     <% links.forEach(link=> { %>
       <span class="nowrap">[<a href="<%= link.url %>" target="_blank"><img src="<%= link.icon %>" width1="22px" />
@@ -42,8 +36,6 @@
 
 <script>
   const terminal = document.getElementById("terminal");
-  const nettest = document.getElementById("nettest");
-  const error_block = document.getElementById("error_block");
   async function addTextToClipboard(text, span_el = null) {
     await navigator.clipboard.writeText(text);
     if (span_el) {
@@ -59,10 +51,7 @@
   const results_to_clipboard_el = document.getElementById("results_to_clipboard")
   results_to_clipboard_el.addEventListener("click",
     async () => {
-      addTextToClipboard(
-        terminal.innerText + "\n\n" +
-        nettest.innerText + "\n\n" +
-        error_block.innerText, results_to_clipboard_el);
+      addTextToClipboard(terminal.innerText, results_to_clipboard_el);
     }
   );
   window.addEventListener("load", async () => {
@@ -74,10 +63,6 @@
       if (saved_error !== '') printTextEl(err_block,
         "\x1b[1mError saved in shared result\x1b[0m\n\n\x1b[1;31mError details:\x1b[0m\n" + saved_error
       );
-
-      document.getElementById('rtt_primary').innerText = "<%= rtt %>";
-      document.getElementById('dl_primary').innerText = "<%= dl_speed  %>";
-      document.getElementById('ul_primary').innerText = "<%= ul_speed  %>";
 
     } catch (err) {
       const err_block = document.getElementById("error_block") || terminal;

@@ -8,6 +8,13 @@ import { getTextResponse, render_speed } from "./text_response.ts";
 import { log } from "./log.ts";
 import { decodeBase64 } from "std/encoding/base64.ts";
 
+export type NetTestData = {
+  size: number;
+  time: number;
+  response_time: number;
+  speed: number;
+};
+
 export type IpData = {
   ip: string;
   is_ip4: boolean;
@@ -15,6 +22,15 @@ export type IpData = {
   ip_details: IpDetails;
   providers: ConfigLink[];
   servertime: string;
+  browsertimeutc?: string;
+  browsertimelocal?: string;
+  nettest?: {
+    round_trip_time?: number;
+    download?: NetTestData | null;
+    upload?: NetTestData | null;
+  } | null;
+  saved_error?: string;
+  comment?: string;
 };
 
 export function isIPv4(ip: string) {
@@ -78,122 +94,6 @@ export async function serverHandler(
     }
   }
 
-  // if (url_pathname === "/s") {
-  //   if (req_method === "get") {
-  //     const share_id = url.search.substring(1);
-  //     if (share_id.length > 0) {
-  //       try {
-  //         const shared_json = await Deno.readTextFile(path_join(config.shared_dir, share_id + ".json"));
-  //         const shared_obj = JSON.parse(shared_json);
-  //         if (
-  //           shared_obj.browsertimeutc &&
-  //           (new Date(shared_obj.browsertimeutc).valueOf() > (Date.now() - 1000 * 60 * 60 * 24 * 30)) // last 30 days
-  //         ) {
-  //           // Return rendered page for browser
-  //           const render_fn = ejs_templates.get("share");
-  //           if (render_fn) {
-  //             const ip_data = {
-  //               ...shared_obj,
-  //               is_ip4: isIPv4(shared_obj.ip),
-  //               ip_details: getIpDetails(shared_obj.ip),
-  //               providers: config.geoip.providers,
-  //               saved_error: shared_obj.error || "",
-  //               links: config.links,
-  //             };
-  //             const rendered = await render_fn({
-  //               ...ip_data,
-  //               text_response: getTextResponse(ip_data, false),
-  //             });
-
-  //             // const dl_speed = ((result) => {
-  //             //   if (result) {
-  //             //     let speed_h = "" + result.speed;
-  //             //     if (result.speed > 1000) speed_h = `${result.speed / 1000}K`;
-  //             //     if (result.speed > 1000000) speed_h = `${Math.round(result.speed / 1000) / 1000}M`;
-  //             //     if (result.speed > 1000000000) speed_h = `${Math.round(result.speed / 1000000) / 1000}G`;
-  //             //     return `${speed_h}bit/s (${result.blobsize / 1000}kB / ${result.time / 1000}s)`;
-  //             //   } else {
-  //             //     return "---";
-  //             //   }
-  //             // })(nettest.dl);
-
-  //             return new Response(rendered, {
-  //               headers: { "content-type": "text/html;charset=UTF-8" },
-  //               status: STATUS_CODE.OK,
-  //             });
-  //           }
-
-  //           return new Response(shared_json, {
-  //             headers: { "content-type": "application/json;charset=UTF-8" },
-  //             status: STATUS_CODE.OK,
-  //           });
-  //         }
-
-  //         await Deno.remove(path_join(config.shared_dir, share_id + ".json"));
-  //         await Deno.remove(path_join(config.shared_dir, share_id + ".deletekey"));
-  //       } catch (err) {
-  //         log("ERROR", err.stack || err.toString());
-  //       }
-  //       return new Response(undefined, {
-  //         headers: { Location: "/" },
-  //         status: STATUS_CODE.TemporaryRedirect,
-  //       });
-  //     }
-  //   }
-  //   if (req_method === "post") {
-  //     const host_header = req.headers.get("host");
-  //     // const origin_header = req.headers.get("origin");
-  //     const ref_header = req.headers.get("referer");
-  //     const server_base_url = (host_header && ref_header && ref_header.endsWith("://" + host_header + "/"))
-  //       ? new URL(ref_header)
-  //       : null;
-  //     if (server_base_url) {
-  //       try {
-  //         const body_ab = await req.arrayBuffer();
-  //         const share_id = crypto.randomUUID().replaceAll("-", "");
-  //         const delete_key = crypto.randomUUID().replaceAll("-", "");
-
-  //         await Deno.writeFile(
-  //           path_join(config.shared_dir, share_id + ".json"),
-  //           new Uint8Array(body_ab),
-  //           { createNew: true },
-  //         );
-  //         await Deno.writeTextFile(
-  //           path_join(config.shared_dir, share_id + ".deletekey"),
-  //           delete_key,
-  //           { createNew: true },
-  //         );
-  //         server_base_url.pathname = "/s";
-  //         server_base_url.search = share_id;
-
-  //         return new Response(JSON.stringify({ url: server_base_url.toJSON(), deletekey: delete_key }));
-  //       } catch (err) {
-  //         log("ERROR", err.stack || err.toString());
-  //         //
-  //       }
-  //     }
-  //     return new Response("Bad request", { status: STATUS_CODE.BadRequest });
-  //   }
-  //   if (req_method === "delete") {
-  //     const share_id = url.search.substring(1);
-  //     if (share_id.length > 0) {
-  //       try {
-  //         const req_delete_key = await req.text();
-  //         const delete_key = await Deno.readTextFile(path_join(config.shared_dir, share_id + ".deletekey"));
-  //         if (delete_key === req_delete_key) {
-  //           await Deno.remove(path_join(config.shared_dir, share_id + ".deletekey"));
-  //           await Deno.remove(path_join(config.shared_dir, share_id + ".json"));
-  //         }
-  //         return new Response(undefined, { status: STATUS_CODE.NoContent });
-  //       } catch (err) {
-  //         log("ERROR", err.stack || err.toString());
-  //         return new Response("Bad request", { status: STATUS_CODE.BadRequest });
-  //         // pass
-  //       }
-  //     }
-  //   }
-  // }
-
   if (req_method === "get") {
     if (url_pathname === "/empty") {
       // Empty response used to measure round-trip time (aka latency).
@@ -216,11 +116,32 @@ export async function serverHandler(
           const shared_json = new TextDecoder().decode(decodeBase64(shared_str));
           const shared_obj = JSON.parse(shared_json);
 
-          const ip_data = {
+          const ip_data: IpData = {
             ip: shared_obj.ip,
             is_ip4: isIPv4(shared_obj.ip),
             ip_details: getIpDetails(shared_obj.ip),
             ua: shared_obj.ua,
+            nettest: shared_obj.nt?.rtt
+              ? {
+                round_trip_time: shared_obj.nt.rtt,
+                download: shared_obj.nt.dl
+                  ? {
+                    size: shared_obj.nt.dl.sz,
+                    time: shared_obj.nt.dl.t,
+                    response_time: shared_obj.nt.dl.rt,
+                    speed: shared_obj.nt.dl.s,
+                  }
+                  : null,
+                upload: shared_obj.nt.ul
+                  ? {
+                    size: shared_obj.nt.ul.sz,
+                    time: shared_obj.nt.ul.t,
+                    response_time: shared_obj.nt.ul.rt,
+                    speed: shared_obj.nt.ul.s,
+                  }
+                  : null,
+              }
+              : null,
             providers: config.geoip.providers || [],
             servertime: shared_obj.stu || "",
             browsertimeutc: shared_obj.btu || "",
@@ -231,13 +152,8 @@ export async function serverHandler(
 
           const ip_data_render = {
             ...ip_data,
-            rtt: shared_obj.nt?.rtt === undefined ? "---" : (shared_obj.nt.rtt + "ms"),
-            dl_speed: shared_obj.nt?.dl === undefined ? "---" : render_speed(shared_obj.nt.dl),
-            ul_speed: shared_obj.nt?.ul === undefined ? "---" : render_speed(shared_obj.nt.ul),
             links: config.links || [],
           };
-
-          // const text_response = getTextResponse(ip_data, false);
 
           if (
             content_type === "text/plain" ||
@@ -360,9 +276,6 @@ export async function serverHandler(
           },
         );
       }
-
-      // const static_content = static_files.get("index.html");
-      // if (static_content) return new Response(static_content);
     }
   }
   // Fallback - Route not found
