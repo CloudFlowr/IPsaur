@@ -20,7 +20,6 @@ function getConfiguredRateLimitThreshild() {
 }
 
 export default {
-  shared_dir: "./shared",
   server: {
     hostname: "0.0.0.0",
     port: getConfiguredServerPort(),
