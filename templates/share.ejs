@@ -31,18 +31,6 @@
     Download Speed: <span id="dl_primary">---</span><br />
     Upload Speed: <span id="ul_primary">---</span><br />
   </div>
-  <% if (comment !=='' ) { %>
-    <div id="comment_block" class="box"><span class="bold">Comments:</span>
-      <pre style="margin: .5em;"><%= comment %></pre>
-    </div>
-    <% } %>
-      <div id="links_block" class="box menu">
-        <% links.forEach(link=> { %>
-          <span class="nowrap">[<a href="<%= link.url %>" target="_blank"><img src="<%= link.icon %>" width1="22px" />
-              <%= link.name %>
-            </a>]</span>
-          <% }) %>
-      </div>
 </body>
 
 <script>
