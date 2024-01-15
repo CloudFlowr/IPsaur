@@ -4,7 +4,7 @@ import { join as path_join } from "std/path/join.ts";
 import { stringify as yaml_stringify } from "std/yaml/stringify.ts";
 import { getIpDetails, IpDetails } from "./ip_details.ts";
 import { isRateLimited } from "./rate_limiter.ts";
-import { getTextResponse } from "./text_response.ts";
+import { getTextResponse, render_speed } from "./text_response.ts";
 import { log } from "./log.ts";
 import { decodeBase64 } from "std/encoding/base64.ts";
 
@@ -216,39 +216,61 @@ export async function serverHandler(
           const shared_json = new TextDecoder().decode(decodeBase64(shared_str));
           const shared_obj = JSON.parse(shared_json);
 
+          const ip_data = {
+            ip: shared_obj.ip,
+            is_ip4: isIPv4(shared_obj.ip),
+            ip_details: getIpDetails(shared_obj.ip),
+            ua: shared_obj.ua,
+            providers: config.geoip.providers || [],
+            servertime: shared_obj.stu || "",
+            browsertimeutc: shared_obj.btu || "",
+            browsertimelocal: shared_obj.btl || "",
+            saved_error: shared_obj.e || "",
+            comment: shared_obj.c || "",
+          };
+
+          const ip_data_render = {
+            ...ip_data,
+            rtt: shared_obj.nt?.rtt === undefined ? "---" : (shared_obj.nt.rtt + "ms"),
+            dl_speed: shared_obj.nt?.dl === undefined ? "---" : render_speed(shared_obj.nt.dl),
+            ul_speed: shared_obj.nt?.ul === undefined ? "---" : render_speed(shared_obj.nt.ul),
+            links: config.links || [],
+          };
+
+          // const text_response = getTextResponse(ip_data, false);
+
+          if (
+            content_type === "text/plain" ||
+            (ua_header.startsWith("curl/") && content_type === "")
+          ) {
+            const no_logo = url.searchParams.has("nologo") || content_type === "text/plain";
+            return new Response(getTextResponse(ip_data_render, !no_logo, config.links), {
+              headers: { "content-type": "text/plain;charset=UTF-8" },
+              status: STATUS_CODE.OK,
+            });
+          }
+
+          // Return json for corresponding content types
+          if (content_type === "application/json" || content_type === "text/json") {
+            return new Response(JSON.stringify(ip_data, undefined, 2), {
+              headers: { "content-type": "application/json;charset=UTF-8" },
+              status: STATUS_CODE.OK,
+            });
+          }
+
+          // Return yaml for corresponding content types
+          if (content_type === "application/yaml" || content_type === "text/yaml") {
+            return new Response(yaml_stringify(ip_data), {
+              headers: { "content-type": "application/yaml;charset=UTF-8" },
+              status: STATUS_CODE.OK,
+            });
+          }
+
           // Return rendered page for browser
           const render_fn = ejs_templates.get("share");
           if (render_fn) {
-            // deno-lint-ignore no-explicit-any
-            const render_speed = (result: any) => {
-              if (result) {
-                let speed_h = "" + result.s;
-                if (result.s > 1000) speed_h = `${result.s / 1000}K`;
-                if (result.s > 1000000) speed_h = `${Math.round(result.s / 1000) / 1000}M`;
-                if (result.s > 1000000000) speed_h = `${Math.round(result.s / 1000000) / 1000}G`;
-                return `${speed_h}bit/s (${result.sz / 1000}kB / ${result.t / 1000}s)`;
-              } else {
-                return "---";
-              }
-            };
-
-            const ip_data = {
-              ip: shared_obj.ip,
-              is_ip4: isIPv4(shared_obj.ip),
-              ip_details: getIpDetails(shared_obj.ip),
-              ua: shared_obj.ua,
-              providers: config.geoip.providers || [],
-              servertime: shared_obj.stu || "",
-              saved_error: shared_obj.e || "",
-              comment: shared_obj.c || "",
-              links: config.links || [],
-              rtt: shared_obj.nt?.rtt === undefined ? "---" : (shared_obj.nt.rtt + "ms"),
-              dl_speed: shared_obj.nt?.dl === undefined ? "---" : render_speed(shared_obj.nt.dl),
-              ul_speed: shared_obj.nt?.ul === undefined ? "---" : render_speed(shared_obj.nt.ul),
-            };
-
             const rendered = await render_fn({
-              ...ip_data,
+              ...ip_data_render,
               text_response: getTextResponse(ip_data, false),
             });
 
@@ -257,11 +279,6 @@ export async function serverHandler(
               status: STATUS_CODE.OK,
             });
           }
-
-          return new Response(shared_json, {
-            headers: { "content-type": "application/json;charset=UTF-8" },
-            status: STATUS_CODE.OK,
-          });
         } catch (err) {
           log("ERROR", err.stack || err.toString());
         }
@@ -270,15 +287,6 @@ export async function serverHandler(
           status: STATUS_CODE.TemporaryRedirect,
         });
       }
-
-      //       return new Response(conn_info.remoteAddr.hostname, {
-      //         headers: { "content-type": "text/plain;charset=UTF-8" },
-      //         status: STATUS_CODE.OK,
-      //       });
-      //     } catch (err) {
-      //       log("ERROR", err.stack || err.toString());
-      //     }
-      //   }
     }
 
     const ip_data: IpData = {
@@ -291,7 +299,7 @@ export async function serverHandler(
     };
 
     if (url_pathname === "/json") {
-      return new Response(JSON.stringify(ip_data), {
+      return new Response(JSON.stringify(ip_data, undefined, 2), {
         headers: { "content-type": "application/json;charset=UTF-8" },
         status: STATUS_CODE.OK,
       });
@@ -327,7 +335,7 @@ export async function serverHandler(
 
       // Return json for corresponding content types
       if (content_type === "application/json" || content_type === "text/json") {
-        return new Response(JSON.stringify(ip_data), {
+        return new Response(JSON.stringify(ip_data, undefined, 2), {
           headers: { "content-type": "application/json;charset=UTF-8" },
           status: STATUS_CODE.OK,
         });

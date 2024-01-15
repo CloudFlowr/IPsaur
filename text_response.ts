@@ -52,7 +52,11 @@ export function printLogo(
 `.replaceAll("0", "▓") + links_text + "\n\n";
 }
 
-export function getTextResponse(data: IpData, with_logo: boolean, links: ConfigLink[] = []): string {
+export function getTextResponse(
+  data: IpData & { browsertimelocal?: string; comment?: string; browsertimeutc?: string },
+  with_logo: boolean,
+  links: ConfigLink[] = [],
+): string {
   let rsp_text = with_logo ? printLogo(links) : "";
   rsp_text += wrapWithColorCode(`IPv${data.is_ip4 ? 4 : 6} Address: `, [ANSI_COLOR_CODE.bold, ANSI_COLOR_CODE.green]) +
     wrapWithColorCode(data.ip, [ANSI_COLOR_CODE.bold, ANSI_COLOR_CODE.underline, ANSI_COLOR_CODE.green]) + "\n";
@@ -84,11 +88,32 @@ export function getTextResponse(data: IpData, with_logo: boolean, links: ConfigL
   }
   rsp_text += wrapWithColorCode("User Agent: ", [ANSI_COLOR_CODE.bold, ANSI_COLOR_CODE.yellow]) + data.ua + "\n\n";
 
-  rsp_text += wrapWithColorCode("Server time (UTC): ", [ANSI_COLOR_CODE.bold, ANSI_COLOR_CODE.cyan]) +
-    new Date().toUTCString() + "\n";
-  if (Object.hasOwn(data, 'browsertimelocal')) {
+  if (data.servertime) {
+    rsp_text += wrapWithColorCode("Server time (UTC): ", [ANSI_COLOR_CODE.bold, ANSI_COLOR_CODE.cyan]) +
+      new Date(data.servertime).toISOString() + "\n";
+  }
+  if (data.browsertimeutc) {
+    rsp_text += wrapWithColorCode("Browser time (UTC): ", [ANSI_COLOR_CODE.bold, ANSI_COLOR_CODE.cyan]) +
+      new Date(data.browsertimeutc).toISOString() + "\n";
+  }
+  if (data.browsertimelocal) {
     rsp_text += wrapWithColorCode("Browser time (Local): ", [ANSI_COLOR_CODE.bold, ANSI_COLOR_CODE.cyan]) +
-    Object.getOwnPropertyDescriptor(data, 'browsertimelocal')?.value + "\n";
+      data.browsertimelocal + "\n";
+  }
+  if (data.comment) {
+    rsp_text += "\n" + wrapWithColorCode("Comments: ", [ANSI_COLOR_CODE.bold]) + "\n" + data.comment + "\n";
   }
   return rsp_text;
+}
+
+export function render_speed(data: { sz: number; s: number; t: number; rt: number }) {
+  if (data) {
+    let speed_h = "" + data.s;
+    if (data.s > 1000) speed_h = `${data.s / 1000}K`;
+    if (data.s > 1000000) speed_h = `${Math.round(data.s / 1000) / 1000}M`;
+    if (data.s > 1000000000) speed_h = `${Math.round(data.s / 1000000) / 1000}G`;
+    return `${speed_h}bit/s (${data.sz / 1000}kB / ${data.t / 1000}s)`;
+  } else {
+    return "---";
+  }
 }
