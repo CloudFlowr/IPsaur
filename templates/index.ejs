@@ -1,119 +1,270 @@
-<html>
-<head>
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css"
-    integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/grids-responsive-min.css" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="/client.css" />
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+  <title>IPsaur</title>
+  <meta charset="UTF-8" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/client.css" />
+  <script src="/client.js"></script>
 </head>
 
 <body>
-  <input id="darkModeSwitcher" type="checkbox" />
-  <div class="pure-g" style="height: 100vh;">
-    <div class="pure-g pure-menu pure-menu-horizontal">
-      <a href="#" class="pure-menu-heading pure-menu-link"><img src="/favicon-32x32.png" alt="IP123 logo" width="32px"
-          height="32px"></a>
-      <ul class="pure-menu-list custom-menu-right">
-        <li class="pure-menu-item">
-          <!-- <button class="pure-button">Share</button> -->
-        </li>
-        <li class="pure-menu-item" style="width: 40px;">
-        </li>
-      </ul>
+  <img id="logo" class="bounce" style="position: absolute"
+    src="data:image/png;base64,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" />
+  <div style="padding-left: 60px" class="box menu">
+    <span class="bold"><span style="font-size: 1.2em">IPsaur</span></span>
+    <div class="bold">
+      <span>[<a href=""><img
+            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAABRUlEQVR4nN2UTU4CQRSEOyBsBA+i3gLXCMmEU0AQvQA75BooXsg/FC9hcKMLP/OSwvSQpqdx4oZKOplMVVf1vHn9nNsbAGO2wOV1H8ACuAN6QL10iMtrNvEGdEuFuDx/CJwAQ+Dek02BSkrAJBbgA6gCfeBzHeJiADoSfgGzogBvX8sL6WwT1YClRH2/XC4BwEB7zaMWEmQSPNine+/HiQFV7TVkIcFc5DDFMARgJI/bEGm9bTh2fwRwKo9FiFyJbJQIaMpjFQtolgg4ksd7iHz57xLNRV6UCLiSxyxE9kJtmgq16WOsTesaXL8XbRdoNhlegxdNoq5Edu1bO5ifabx8A+0i8dQLGcTKBRzo5GZumKScpuKFrP/JSB3S0LLnS6/mdvLrpHG9MVmXFMNqfp5sHJiwmc0W4FmX0dYTcCMu/EP3Bj9LTaBSNmys+gAAAABJRU5ErkJggg==" />Test
+          again</a>]</span>
+      <span id="results_to_clipboard">[<a href="javascript:void(0)"><img
+            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA1ElEQVR4nO3aMQ6DMBBEUVc5ecDknsAZkupHSKC4IQ5mHSztvBqsHe0IGocgH0APvDhueacLraAsxOZZe7gb8ADmvQmSZ0/54ZwJGJaZSoIMBgNYBdnEkiC7m7gwyFwSxHIAs3OCgiT+/dWi1ka+PNud+I/cmwlSCwqS0EYMoWolVC1DqFqeq4URBclxV62aUBDPG8GIguS4q1ZNKIjnjWBEQXLcVasmFCShjRhC1UqoWoZQtbxUqwXBc5CJ9owlQSLt6UvvosRGNjOuN5CO30WRcI032/CwcRZMTXIAAAAASUVORK5CYII=" />To
+          clipboard</a>]</span>
+      <span>[<a href="javascript:toggleShareBlock()"><img
+            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAA10lEQVR4nOWUQQ6CMBREYcOOW+gF3EnPorcR8BByGndew4pHQI15pMlfEG1Af0ti4qyaNpn57UwnSf4aQAbsgQtggcrtxRSoeUcZU8AKaQEYWdtY5AvgLqRmIHAOJc7laTr82GmJU2Arhjo8gUZMbt3kjlxlMrACjoMpT8A6NHZXWTcyLbLvbpF+TT4SO4ebnOUq4onYPYBlELFHwMwlUOFHF+uJMhGxEr3aY/JGbfLsMVV8tIPcso3WpkxXRTlH2RXR23Qk1mFt+kGsdW2aePASa32b/jR6YOM7qBO4ZX0AAAAASUVORK5CYII=" />Share
+          results</a>]</span>
     </div>
-
-    <div class="pure-u-md-1-2">
-      <h1>Your IP address:</h1>
-      <h2 class="card"><%= ip %></h2>
-
-      <h1>User agent:</h1>
-      <div class="card"><%= ua %></div>
+  </div>
+  <div id="share_block" style="display: none" class="box">
+    The test results will be shared.<br />
+    Please read and accept the data sharing terms and conditions below.<br />
+    <div id="data_sharing_conditions">
+      By accepting the data sharing terms and conditions you agree with the following statements:<br /><br />
+      1. Shared test results <span class="underline">WILL NOT</span> be stored on any remote servers.<br /><br />
+      2. Shared test results <span class="underline">contain</span> the following information like:<br />
+      * Your IP address<br />
+      * Your browser and device datails<br />
+      * Results of Network Bandwidth Test<br />
+      * Test errors (if they appeared)<br />
+      * Your comments<br /><br />
+      3. You will receive the Share URL which contains the collected test results in non-encrypted format. It means that
+      your test results can be reviewed by anyone whom you share the URL with.<br /><br />
+      [<input id="share_accepted" type="checkbox" onchange="shareAccepted(this.checked)" />]<label for="share_accepted">
+        I accept the data sharing terms and conditions.</label>
     </div>
-
-    <div class="pure-u-md-1-2">
-      <h1>IP Location Details:</h1>
-      <table class="pure-table pure-table-bordered">
-        <tbody>
-        <% if (ip_details.city) { %>
-          <tr>
-            <th>Country</th>
-            <td>
-              <%= ip_details.city.continent.code %>
-                <%= ip_details.city.country.iso_code %> - <%= ip_details.city.country.names.en %>
-            </td>
-          </tr>
-          <tr>
-            <th>City</th>
-            <td>
-              <%= ip_details.city.city.names.en %>
-            </td>
-          </tr>
-        <% } %>
-        <% if (ip_details.asn) { %>
-          <tr>
-            <th>Provider</th>
-            <td>
-              <%= ip_details.asn.autonomous_system_organization %> (AS<%= ip_details.asn.autonomous_system_number%>)
-            </td>
-          </tr>
-        <% } %>
-        <% if (ip_details.connectionType) { %>
-          <tr>
-            <th>Connection Type</th>
-            <td>
-              <%= ip_details.connectionType.connection_type %>
-            </td>
-          </tr>
-        <% } %>
-        </tbody>
-      </table>
-
-      <% if (providers.maxmind) { %>
-        <div style="font-size: small;">
-          This product includes GeoLite2 data created by MaxMind, available from
-          <a target="_blank" href="https://www.maxmind.com">https://www.maxmind.com</a>.
-        </div>
-      <% } %>
-      <% if (providers.dbip) { %>
-        <div style="font-size: small;">
-          <a target="_blank" href='https://db-ip.com'>IP Geolocation by DB-IP</a>
-        </div>
-      <% } %>
+    <div id="do_share" style="display: none">
+      Comment (optional):<br /><textarea id="share_comment" style="
+            width: 100%;
+            height: 5em;
+            background-color: #111;
+            color: #ddd;
+            font-size: 14px;
+          "></textarea><br />
+      <span class="nowrap">[<a href="javascript:doShare()" style="text-wrap: pretty;">Give me the share
+          URL</a>]</span><br /><br />
     </div>
-
-    <div class="pure-u-md-2-2" style="width:100%">
-      <h1>Network Bandwidth Test</h1>
-      <table class="pure-table">
-        <thead>
-          <tr>
-            <th>Region</th>
-            <th>Round-Trip Time</th>
-            <th>Download Speed</th>
-            <th>Upload Speed</th>
-            <th style="text-align: center;"><button id="test_all" class="pure-button pure-button-primary">Test All</button></th>
-        </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Primary</td>
-            <td><span id="rtt_primary"></span></td>
-            <td><span id="dl_primary"></span></td>
-            <td><span id="ul_primary"></span></td>
-            <td style="text-align: center;"><button id="test_primary"
-              class="pure-button pure-button-primary">Test</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div id="share_data" style="display: none">
+      <br />
+      Share URL:
+      <span id="share_url" class="underline" style="overflow-wrap: anywhere; font-size: 0.8em;"></span>
+      <span id="share_url_clip" class="nowrap">[<a href="javascript:void(0)"><img
+            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA1ElEQVR4nO3aMQ6DMBBEUVc5ecDknsAZkupHSKC4IQ5mHSztvBqsHe0IGocgH0APvDhueacLraAsxOZZe7gb8ADmvQmSZ0/54ZwJGJaZSoIMBgNYBdnEkiC7m7gwyFwSxHIAs3OCgiT+/dWi1ka+PNud+I/cmwlSCwqS0EYMoWolVC1DqFqeq4URBclxV62aUBDPG8GIguS4q1ZNKIjnjWBEQXLcVasmFCShjRhC1UqoWoZQtbxUqwXBc5CJ9owlQSLt6UvvosRGNjOuN5CO30WRcI032/CwcRZMTXIAAAAASUVORK5CYII=" />Clip</a>]</span><br />
     </div>
+  </div>
+  <div id="error_block" class="box" style="display: none"></div>
+  <div id="terminal" class="box terminal"></div>
+  <div id="nettest" class="box"><span class="magenta bold">Network Bandwidth Test</span><br />
+    Round-Trip Time: <span id="rtt_primary"></span><br />
+    Download Speed: <span id="dl_primary"></span><br />
+    Upload Speed: <span id="ul_primary"></span><br />
+  </div>
+  <div id="links_block" class="box menu">
+    <% links.forEach(link=> { %>
+      <span class="nowrap">[<a href="<%= link.url %>" target="_blank"><img src="<%= link.icon %>" width1="22px" />
+          <%= link.name %>
+        </a>]</span>
+      <% }) %>
   </div>
 </body>
 
-<script src="/client.js"></script>
+<script>
+  const test_results = {
+    ip: "<%= ip %>",
+    ua: "<%= ua.replaceAll('\"', '\\\"') %>",
+    nt: {
+      rtt: undefined,
+      dl: undefined,
+      ul: undefined
+    },
+    stu: "<%= servertime %>",
+    btu: "",
+    btl: "",
+    c: "",
+    e: "",
+  };
+
+  function toggleShareBlock() {
+    const share_block = document.getElementById("share_block");
+    if (share_block) {
+      if (share_block.style.display === "none") {
+        share_block.style.display = "block";
+      } else {
+        share_block.style.display = "none";
+      }
+    }
+  }
+
+  function shareAccepted(accepted = false) {
+    const do_share_block = document.getElementById("do_share");
+    do_share_block.style.display = accepted ? "block" : "none";
+  }
+
+  function doShare() {
+    const do_share_block = document.getElementById("do_share");
+    const share_data_block = document.getElementById("share_data");
+    const share_url_el = document.getElementById("share_url");
+    const share_deletekey_el = document.getElementById("share_deletekey");
+    const share_accepted_el = document.getElementById("share_accepted");
+    if (share_accepted_el) share_accepted_el.disabled = true;
+    test_results.c = document.getElementById("share_comment").value || "";
+    const share_hash = btoa(JSON.stringify(test_results));
+    const u = new URL(window.location.origin);
+    u.pathname = 's';
+    u.search = share_hash;
+    const share_a_el = document.createElement("a");
+    share_a_el.href = u.toString();
+    share_a_el.target = share_hash;
+    share_a_el.innerText = u.toString();
+    share_url_el.innerHTML = share_a_el.outerHTML;
+    if (share_data_block) share_data_block.style.display = 'block';
+    if (do_share_block) do_share_block.style.display = "none";
+  }
+
+  function render_speed(result) {
+    if (result) {
+      let speed_h = "" + result.s;
+      if (result.s > 1000) speed_h = `${result.s / 1000}K`;
+      if (result.s > 1000000) speed_h = `${Math.round(result.s / 1000) / 1000}M`;
+      if (result.s > 1000000000) speed_h = `${Math.round(result.s / 1000000) / 1000}G`;
+      return `${speed_h}bit/s (${result.sz / 1000}kB / ${result.t / 1000}s)`;
+    } else {
+      return "---";
+    }
+  };
+
+  async function testBandwidth(region = "primary", result = test_results.nt) {
+    const rtt_el = document.getElementById("rtt_" + region);
+    const dl_el = document.getElementById("dl_" + region);
+    const ul_el = document.getElementById("ul_" + region);
+
+    if (rtt_el) rtt_el.innerText = "Testing";
+    if (dl_el) dl_el.innerText = "Testing";
+    if (ul_el) ul_el.innerText = "Testing";
+
+    result.rtt = await testRtt(region);
+    if (rtt_el) rtt_el.innerText = result.rtt + "ms";
+
+    let bw_test_size = 1000000;
+    if (result.rtt > 10) bw_test_size = 500000;
+    if (result.rtt > 100) bw_test_size = 300000;
+    if (result.rtt > 1000) bw_test_size = 200000;
+    if (result.rtt > 2000) bw_test_size = 100000;
+
+    result.dl = await testDownload(region, bw_test_size);
+    if (dl_el) dl_el.innerText = render_speed(result.dl);
+
+    result.ul = await testUpload(region, bw_test_size);
+    if (ul_el) ul_el.innerText = render_speed(result.ul);
+  }
+
+  async function testRtt(region) {
+    const start_ts = Date.now();
+    const rsp = await fetch("/empty");
+    const end_ts = Date.now();
+    const rsp_time = Number.parseInt(rsp.headers.get("x-response-time")) || 0;
+    return end_ts - start_ts - rsp_time;
+  }
+
+  async function testDownload(region, length) {
+    const size = Number.parseInt(length) || 1000000;
+
+    const rsp = await fetch("/bandwidth?length=" + size);
+    const start_ts = Date.now();
+    const rsp_blob = await rsp.arrayBuffer();
+    const end_ts = Date.now();
+    const rsp_time = Number.parseInt(rsp.headers.get("x-response-time")) || 0;
+    const rsp_length = rsp_blob.byteLength;
+    const time = end_ts - start_ts - rsp_time;
+    const speed = Math.round(rsp_length * 8 / (time / 1000));
+    return {
+      sz: rsp_length,
+      t: time,
+      rt: rsp_time,
+      s: speed,
+    };
+  }
+
+  async function testUpload(region, length) {
+    const size = Number.parseInt(length) || 1000000;
+
+    const start_ts = Date.now();
+    const rsp = await fetch("/bandwidth", {
+      method: "POST",
+      body: "".padEnd(size, start_ts.toString()),
+      headers: { "Accept-Encoding": "", },
+    });
+    const end_ts = Date.now();
+    const rsp_time = Number.parseInt(rsp.headers.get("x-response-time")) || 0;
+    const time = end_ts - start_ts;
+    const speed = Math.round(size * 8 / (rsp_time / 1000));
+    return {
+      sz: size1,
+      t: time,
+      rt: rsp_time,
+      s: speed,
+    };
+  }
+
+  async function addTextToClipboard(text, span_el = null) {
+    await navigator.clipboard.writeText(text);
+    if (span_el) {
+      const tooltip_el = document.createElement("span");
+      tooltip_el.classList.add('box', 'tooltip');
+      tooltip_el.innerText = 'Copied';
+      span_el.prepend(tooltip_el);
+      setTimeout(() => {
+        span_el.removeChild(tooltip_el);
+      }, 1000);
+    }
+  }
+  const results_to_clipboard_el = document.getElementById("results_to_clipboard")
+  results_to_clipboard_el.addEventListener("click",
+    async () => {
+      addTextToClipboard(JSON.stringify(test_results, undefined, 2), results_to_clipboard_el);
+    }
+  );
+  const share_url_clip_el = document.getElementById("share_url_clip");
+  share_url_clip_el.addEventListener("click",
+    async () => await addTextToClipboard(document.getElementById("share_url")?.innerText || '', share_url_clip_el)
+  );
+
+  window.addEventListener("load", async () => {
+    const terminal = document.getElementById("terminal");
+    try {
+      const ts = new Date();
+      test_results.btu = ts.toJSON();
+      test_results.btl = ts.toString();
+
+      const text = `<%= text_response.replaceAll('\`', '\\\`') %>` +
+        "\x1b[1;36mBrowser time (Local):\x1b[0m " + ts.toString(); + "\n";
+
+      printTextEl(terminal, text);
+      test_results.nt = await testBandwidth("primary");
+    } catch (err) {
+      const err_block = document.getElementById("error_block") || terminal;
+      test_results.e = err.stack;
+      err_block.style.display = "block";
+      printTextEl(
+        err_block,
+        "\x1b[1mOoops... There's something happened in IPsaur's land.\x1b[0m\n\n\x1b[1;31mError details:\x1b[0m\n" + err.toString()
+      );
+    }
+  });
+</script>
 
 </html>
