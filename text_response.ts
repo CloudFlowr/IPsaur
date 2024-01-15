@@ -107,14 +107,13 @@ export function getTextResponse(
     rsp_text += "Download Speed: " + render_speed(data.nettest.download) + "\n";
     rsp_text += "Upload Speed: " + render_speed(data.nettest.upload) + "\n";
   }
-
+  if (data.saved_error && data.saved_error.length > 0) {
+    rsp_text += "\n" + wrapWithColorCode("Saved Error: ", [ANSI_COLOR_CODE.bold, ANSI_COLOR_CODE.red]) + "\n" + data.saved_error + "\n";
+  }
   if (data.comment) {
     rsp_text += "\n" + wrapWithColorCode("Comments: ", [ANSI_COLOR_CODE.bold]) + "\n" + data.comment + "\n";
   }
 
-  if (data.saved_error && data.saved_error.length > 0) {
-    rsp_text += "\n" + wrapWithColorCode("Saved Error: ", [ANSI_COLOR_CODE.bold, ANSI_COLOR_CODE.red]) + "\n" + data.saved_error + "\n";
-  }
   return rsp_text;
 }
 
