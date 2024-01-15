@@ -32,17 +32,40 @@
     Upload Speed: <span id="ul_primary">---</span><br />
   </div>
   <div id="links_block" class="box menu">
-  <% links.forEach(link=> { %>
-    <span class="nowrap">[<a href="<%= link.url %>" target="_blank"><img src="<%= link.icon %>" width1="22px" />
-      <%= link.name %>
-    </a>]</span>
-  <% }) %>
+    <% links.forEach(link=> { %>
+      <span class="nowrap">[<a href="<%= link.url %>" target="_blank"><img src="<%= link.icon %>" width1="22px" />
+          <%= link.name %>
+        </a>]</span>
+      <% }) %>
   </div>
 </body>
 
 <script>
+  const terminal = document.getElementById("terminal");
+  const nettest = document.getElementById("nettest");
+  const error_block = document.getElementById("error_block");
+  async function addTextToClipboard(text, span_el = null) {
+    await navigator.clipboard.writeText(text);
+    if (span_el) {
+      const tooltip_el = document.createElement("span");
+      tooltip_el.classList.add('box', 'tooltip');
+      tooltip_el.innerText = 'Copied';
+      span_el.prepend(tooltip_el);
+      setTimeout(() => {
+        span_el.removeChild(tooltip_el);
+      }, 1000);
+    }
+  }
+  const results_to_clipboard_el = document.getElementById("results_to_clipboard")
+  results_to_clipboard_el.addEventListener("click",
+    async () => {
+      addTextToClipboard(
+        terminal.innerText + "\n\n" +
+        nettest.innerText + "\n\n" +
+        error_block.innerText, results_to_clipboard_el);
+    }
+  );
   window.addEventListener("load", async () => {
-    const terminal = document.getElementById("terminal");
     try {
       const text = `<%= text_response.replaceAll('\`', '\\\`') %>`;
 
