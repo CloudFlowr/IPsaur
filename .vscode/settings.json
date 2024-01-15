@@ -4,7 +4,8 @@
   "deno.unstable": false,
   "css.format.preserveNewLines": false,
   "editor.rulers": [
-    80,120
+    80,
+    120
   ],
   "editor.wordWrap": "on",
   "editor.wordWrapColumn": 160,

@@ -46,7 +46,7 @@ function printTextEl(element, text) {
     if (match) {
       const code = match[1];
       const code_styles = getStylesFromCode(code);
-      if (code_styles.indexOf('reset') === -1) {
+      if (code_styles.indexOf("reset") === -1) {
         const e = document.createElement("span");
         for (const s of getStylesFromCode(code)) {
           e.classList.add(s);

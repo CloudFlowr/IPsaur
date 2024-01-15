@@ -156,24 +156,20 @@
     if (dl_el) dl_el.innerText = "Testing";
     if (ul_el) ul_el.innerText = "Testing";
 
-    // try {
-      result.rtt = await testRtt(region);
-      if (rtt_el) rtt_el.innerText = result.rtt + "ms";
+    result.rtt = await testRtt(region);
+    if (rtt_el) rtt_el.innerText = result.rtt + "ms";
 
-      let bw_test_size = 1000000;
-      if (result.rtt > 10) bw_test_size = 500000;
-      if (result.rtt > 100) bw_test_size = 300000;
-      if (result.rtt > 1000) bw_test_size = 200000;
-      if (result.rtt > 2000) bw_test_size = 100000;
+    let bw_test_size = 1000000;
+    if (result.rtt > 10) bw_test_size = 500000;
+    if (result.rtt > 100) bw_test_size = 300000;
+    if (result.rtt > 1000) bw_test_size = 200000;
+    if (result.rtt > 2000) bw_test_size = 100000;
 
-      result.dl = await testDownload(region, bw_test_size);
-      if (dl_el) dl_el.innerText = render_speed(result.dl);
+    result.dl = await testDownload(region, bw_test_size);
+    if (dl_el) dl_el.innerText = render_speed(result.dl);
 
-      result.ul = await testUpload(region, bw_test_size);
-      if (ul_el) ul_el.innerText = render_speed(result.ul);
-    // } finally {
-    //   return result;
-    // }
+    result.ul = await testUpload(region, bw_test_size);
+    if (ul_el) ul_el.innerText = render_speed(result.ul);
   }
 
   async function testRtt(region) {

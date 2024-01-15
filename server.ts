@@ -1,10 +1,7 @@
 import config from "./config.ts";
 import { STATUS_CODE } from "std/http/status.ts";
-
-// import { encodeHex } from "std/encoding/hex.ts";
 import { join as path_join } from "std/path/join.ts";
 import { basename as path_basename } from "std/path/basename.ts";
-
 import { AsyncTemplateFunction as ejs_AsyncTemplateFunction, compile as ejs_compile } from "ejs";
 import { serverHandler } from "./server_handler.ts";
 import { log } from "./log.ts";
@@ -40,7 +37,7 @@ function startHttpServer() {
         result?.headers.set("X-Response-Time", ms.toString());
       }
       return result;
-    }
+    },
   );
 }
 

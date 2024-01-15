@@ -1,10 +1,9 @@
 import config, { ConfigLink } from "./config.ts";
 import { STATUS_CODE } from "std/http/status.ts";
-import { join as path_join } from "std/path/join.ts";
 import { stringify as yaml_stringify } from "std/yaml/stringify.ts";
 import { getIpDetails, IpDetails } from "./ip_details.ts";
 import { isRateLimited } from "./rate_limiter.ts";
-import { getTextResponse, render_speed } from "./text_response.ts";
+import { getTextResponse } from "./text_response.ts";
 import { log } from "./log.ts";
 import { decodeBase64 } from "std/encoding/base64.ts";
 

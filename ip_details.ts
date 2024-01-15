@@ -36,8 +36,6 @@ export function getIpDetails(
 }
 
 export function loadGeoLocationDBs(dbs: Record<string, string>) {
-  // Open Maxmind GeoIP2 databases
-
   for (
     const dbname of [
       "anonymousIP",

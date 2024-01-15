@@ -43,8 +43,18 @@ export default {
     },
   },
   links: [
-    { name: "Website", url: "https://cloudflowr.github.com/ipsaur", icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAACXBIWXMAAAsTAAALEwEAmpwYAAABAklEQVR4nOXTvUrDUBgG4Po7KBWESkcXRxfvwEHcHQJeRHF07iW0o+Ii3oI4iFCcBOnu4ibUVXAQB30k+ImhTWqjARFfeJec8z3JCUmt9tvBVNqq0Rkc4hhzVaELOPWZc9R/ijZwFeB1VFxrfBddxU1AF1jCIs7i2i3WyqLruAvgJPteMYujWLvHxqToJh5isIvpgi+kHXsesf0VuoMnvGJ/gofYwwuesVu0qRWb0nQmOt77XCdm0tlW0bE+0i4BD892R34kJMNw+s1ieaj1HDgZd/ckB+4ZTa9K+DJaObwS/WdwHwfRQQ48yKz3y8B5ycJ5GQs3sVXQ+WjRerMQ/hN5A02ixDv6JGl+AAAAAElFTkSuQmCC" },
-    { name: "Wiki", url: "https://github.com/cloudflowr/ipsaur/wiki", icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAACXBIWXMAAAsTAAALEwEAmpwYAAABWUlEQVR4nO3Sv0tXURjH8SsqioYSLQ4OLk2uEnxXbWkIXGrQQXHQUbCvBJKbQlC2iIvQokP0DwSNOms0OKiDkoOIGIqLldBLDj7K4Yv5awgE33CH+z7nfp5zn+cUxT13G3ThdfaUUYvnmRsIV85cO0oV33blwd2YccpfvEcderET/sy9xW98RQeeYj72zKasi06+GBt6MjcS7l2892Mfj7I9H/AdVf9qybMIWcpcPbZxiBb8wKtsvQkHeHlZr6vwLcJLmU99TaxgMxWrWFtH9VWDfBEhnzLXiN3wvZlPw9zC4KWhiVQZa/iD1szPRfB5SJpFtKmuuA5Or1ZiMt5bcYRf2EBN+GWMXis0+8U0pJ9owEcs4E0U7ENnDK25uAkYjpApHONJ3IA9rOILJm4UmoiTng3sc+bHwqXWtBS3AeMxxMeZexAFp28VmsDDdMKiAgyhrdLf8385AaShAgmYqJfXAAAAAElFTkSuQmCC" },
+    {
+      name: "Website",
+      url: "https://cloudflowr.github.com/ipsaur",
+      icon:
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAACXBIWXMAAAsTAAALEwEAmpwYAAABAklEQVR4nOXTvUrDUBgG4Po7KBWESkcXRxfvwEHcHQJeRHF07iW0o+Ii3oI4iFCcBOnu4ibUVXAQB30k+ImhTWqjARFfeJec8z3JCUmt9tvBVNqq0Rkc4hhzVaELOPWZc9R/ijZwFeB1VFxrfBddxU1AF1jCIs7i2i3WyqLruAvgJPteMYujWLvHxqToJh5isIvpgi+kHXsesf0VuoMnvGJ/gofYwwuesVu0qRWb0nQmOt77XCdm0tlW0bE+0i4BD892R34kJMNw+s1ieaj1HDgZd/ckB+4ZTa9K+DJaObwS/WdwHwfRQQ48yKz3y8B5ycJ5GQs3sVXQ+WjRerMQ/hN5A02ixDv6JGl+AAAAAElFTkSuQmCC",
+    },
+    {
+      name: "Wiki",
+      url: "https://github.com/cloudflowr/ipsaur/wiki",
+      icon:
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAACXBIWXMAAAsTAAALEwEAmpwYAAABWUlEQVR4nO3Sv0tXURjH8SsqioYSLQ4OLk2uEnxXbWkIXGrQQXHQUbCvBJKbQlC2iIvQokP0DwSNOms0OKiDkoOIGIqLldBLDj7K4Yv5awgE33CH+z7nfp5zn+cUxT13G3ThdfaUUYvnmRsIV85cO0oV33blwd2YccpfvEcderET/sy9xW98RQeeYj72zKasi06+GBt6MjcS7l2892Mfj7I9H/AdVf9qybMIWcpcPbZxiBb8wKtsvQkHeHlZr6vwLcJLmU99TaxgMxWrWFtH9VWDfBEhnzLXiN3wvZlPw9zC4KWhiVQZa/iD1szPRfB5SJpFtKmuuA5Or1ZiMt5bcYRf2EBN+GWMXis0+8U0pJ9owEcs4E0U7ENnDK25uAkYjpApHONJ3IA9rOILJm4UmoiTng3sc+bHwqXWtBS3AeMxxMeZexAFp28VmsDDdMKiAgyhrdLf8385AaShAgmYqJfXAAAAAElFTkSuQmCC",
+    },
     {
       name: "Github",
       url: "https://github.com/cloudflowr/ipsaur",
