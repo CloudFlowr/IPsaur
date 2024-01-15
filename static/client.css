@@ -12,8 +12,42 @@ body {
   font-size: 18px;
 }
 
+@media screen and (max-width:450px) {
+  .box {
+    font-size: 16px;
+  }
+}
+
+@media screen and (max-width:400px) {
+  .box {
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width:350px) {
+  .box {
+    font-size: 12px;
+    overflow-wrap: break-word;
+  }
+}
+
+.box img {
+  height: 1.2em
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 1;
+  border-color: #ccc;
+  border-style: double;
+}
+
 .terminal {
   white-space: pre-wrap;
+}
+
+.nowrap {
+  text-wrap: nowrap;
 }
 
 .menu {
@@ -32,6 +66,10 @@ body {
   font-weight: bold;
 }
 
+.faint {
+  opacity: 50%;
+}
+
 .italic {
   font-style: italic;
 }
@@ -45,27 +83,27 @@ body {
 }
 
 .green {
-  color: green;
+  color: #00dd00;
 }
 
 .red {
-  color: red;
+  color: #dd0000;
 }
 
 .yellow {
-  color: yellow;
+  color: #dddd00;
 }
 
 .blue {
-  color: blue;
+  color: #3333ff;
 }
 
 .magenta {
-  color: magenta;
+  color: #dd00dd;
 }
 
 .cyan {
-  color: cyan;
+  color: #00dddd;
 }
 
 .grey {

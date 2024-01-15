@@ -1,6 +1,12 @@
 {
-    "deno.enable": true,
-    "deno.lint": true,
-    "deno.unstable": false,
-    "css.format.preserveNewLines": false
+  "deno.enable": true,
+  "deno.lint": true,
+  "deno.unstable": false,
+  "css.format.preserveNewLines": false,
+  "editor.rulers": [
+    80,120
+  ],
+  "editor.wordWrap": "on",
+  "editor.wordWrapColumn": 160,
+  "deno.codeLens.test": true
 }

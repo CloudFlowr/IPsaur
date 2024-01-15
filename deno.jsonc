@@ -1,4 +1,8 @@
 {
+  "fmt": {
+    "indentWidth": 2,
+    "lineWidth": 120
+  },
   "tasks": {
     "dev": "deno run --watch main.ts"
   },
@@ -8,7 +12,7 @@
     "ejs": "https://esm.sh/ejs@3.1.9"
   },
   "deploy": {
-    "project": "47dce628-777d-47d1-9fe6-a55b0bbe6da3",
+    "project": "a069aa6c-c7c5-4c44-b2f5-e62b6987b360",
     "exclude": [],
     "include": [],
     "entrypoint": "main.ts"
