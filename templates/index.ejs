@@ -254,7 +254,7 @@
         "\x1b[1;36mBrowser time (Local):\x1b[0m " + ts.toString(); + "\n";
 
       printTextEl(terminal, text);
-      test_results.nt = await testBandwidth("primary");
+      await testBandwidth("primary");
     } catch (err) {
       const err_block = document.getElementById("error_block") || terminal;
       test_results.e = err.stack;
