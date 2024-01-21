@@ -3,7 +3,7 @@ import { STATUS_CODE } from "std/http/status.ts";
 import { join as path_join } from "std/path/join.ts";
 import { basename as path_basename } from "std/path/basename.ts";
 import { AsyncTemplateFunction as ejs_AsyncTemplateFunction, compile as ejs_compile } from "ejs";
-import { serverHandler } from "./server_handler.ts";
+import { handleServerRequest } from "./server_handler.ts";
 import { log } from "./log.ts";
 import { loadGeoLocationDBs } from "./ip_details.ts";
 
@@ -27,7 +27,7 @@ function startHttpServer() {
       log("INFO", "-->", reqId, info.remoteAddr.hostname, req.method, url.pathname);
       let result = new Response("Not Implemented", { status: STATUS_CODE.NotImplemented });
       try {
-        result = await serverHandler(req, info, static_files, ejs_templates);
+        result = await handleServerRequest(req, info, static_files, ejs_templates);
       } catch (err) {
         result = new Response((err as Error).toString(), { status: STATUS_CODE.InternalServerError });
         log("ERROR", reqId, (err as Error).stack || err.toString());

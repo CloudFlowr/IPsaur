@@ -1,42 +1,18 @@
-import config, { ConfigLink } from "./config.ts";
+import config from "./config.ts";
 import { STATUS_CODE } from "std/http/status.ts";
 import { stringify as yaml_stringify } from "std/yaml/stringify.ts";
-import { getIpDetails, IpDetails } from "./ip_details.ts";
+import { getIpDetails } from "./ip_details.ts";
 import { isRateLimited } from "./rate_limiter.ts";
 import { getTextResponse } from "./text_response.ts";
 import { log } from "./log.ts";
 import { decodeBase64 } from "std/encoding/base64.ts";
-
-export type NetTestData = {
-  size: number;
-  time: number;
-  response_time: number;
-  speed: number;
-};
-
-export type IpData = {
-  ip: string;
-  is_ip4: boolean;
-  ua: string;
-  ip_details: IpDetails;
-  providers: ConfigLink[];
-  servertime: string;
-  browsertimeutc?: string;
-  browsertimelocal?: string;
-  nettest?: {
-    round_trip_time?: number;
-    download?: NetTestData | null;
-    upload?: NetTestData | null;
-  } | null;
-  saved_error?: string;
-  comment?: string;
-};
+import { IpData } from "./types.ts";
 
 export function isIPv4(ip: string) {
   return ip.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/) !== null;
 }
 
-export async function serverHandler(
+export async function handleServerRequest(
   req: Request,
   conn_info: Deno.ServeHandlerInfo,
   static_files: Map<string, string>,

@@ -1,4 +1,4 @@
-import { IpData, NetTestData } from "./server_handler.ts";
+import { IpData, NetTestData } from "./types.ts";
 import { ConfigLink } from "./config.ts";
 
 const ANSI_COLOR_CODE = {
@@ -17,11 +17,11 @@ const ANSI_COLOR_CODE = {
   white: 37,
 };
 
-export function wrapWithColorCode(text: string, code: number[]): string {
+function wrapWithColorCode(text: string, code: number[]): string {
   return `\x1b[${code.join(";")}m${text}\x1b[0m`;
 }
 
-export function printLogo(
+function renderLogo(
   links: ConfigLink[],
 ) {
   const links_text = links.map((link) => "  " + link.name + ": " + wrapWithColorCode(link.url, [4])).join("\n");
@@ -57,7 +57,7 @@ export function getTextResponse(
   with_logo: boolean,
   links: ConfigLink[] = [],
 ): string {
-  let rsp_text = with_logo ? printLogo(links) : "";
+  let rsp_text = with_logo ? renderLogo(links) : "";
   rsp_text += wrapWithColorCode(`IPv${data.is_ip4 ? 4 : 6} Address: `, [ANSI_COLOR_CODE.bold, ANSI_COLOR_CODE.green]) +
     wrapWithColorCode(data.ip, [ANSI_COLOR_CODE.bold, ANSI_COLOR_CODE.underline, ANSI_COLOR_CODE.green]) + "\n";
   if (data.ip_details.asn || data.ip_details.city) {
@@ -104,8 +104,8 @@ export function getTextResponse(
     rsp_text += wrapWithColorCode("\nNetwork Bandwidth Test", [ANSI_COLOR_CODE.bold, ANSI_COLOR_CODE.magenta]) + "\n";
     rsp_text += "Round-Trip Time: " + (data.nettest.round_trip_time ? (data.nettest.round_trip_time + "ms") : "---") +
       "\n";
-    rsp_text += "Download Speed: " + render_speed(data.nettest.download) + "\n";
-    rsp_text += "Upload Speed: " + render_speed(data.nettest.upload) + "\n";
+    rsp_text += "Download Speed: " + renderSpeed(data.nettest.download) + "\n";
+    rsp_text += "Upload Speed: " + renderSpeed(data.nettest.upload) + "\n";
   }
   if (data.saved_error && data.saved_error.length > 0) {
     rsp_text += "\n" + wrapWithColorCode("Saved Error: ", [ANSI_COLOR_CODE.bold, ANSI_COLOR_CODE.red]) + "\n" +
@@ -118,7 +118,7 @@ export function getTextResponse(
   return rsp_text;
 }
 
-export function render_speed(data: NetTestData | undefined | null) {
+function renderSpeed(data: NetTestData | undefined | null) {
   if (data) {
     let speed_h = "" + data.speed;
     if (data.speed > 1000) speed_h = `${data.speed / 1000}K`;
