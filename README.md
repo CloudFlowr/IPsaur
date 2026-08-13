@@ -5,13 +5,7 @@ IPsaur is a simple self-hosted IP and network bandwidth checker based on [Deno](
 
 ## Demo
 
-Try IPsaur at https://ipsaur.deno.dev/.
-
-## Buy me a coffee
-
-Whether you use this project, have learned something from it, or just like it, please consider supporting it by buying me a coffee, so I can dedicate more time on open-source projects like this :)
-
-<a href="https://www.buymeacoffee.com/pavel.lechenko" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
+Try IPsaur at https://ipsaur.plechenko.deno.net/.
 
 ## Features
 
@@ -63,7 +57,7 @@ Then open the Share URL on another computer:
 IPsaur supports output to cURL.
 
 ```shell
-curl https://ipsaur.deno.dev/
+curl https://ipsaur.plechenko.deno.net/
 ```
 
 ![Screenshot](media/curl_output.png)
@@ -71,7 +65,7 @@ curl https://ipsaur.deno.dev/
 Shared URL can be also opened in cURL:
 
 ```shell
-curl https://ipsaur.deno.dev/s?eyJpcCI6IjE2My4xMTYuMTc4LjI5IiwidWEiOiJNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvMTIwLjAuMC4wIFNhZmFyaS81MzcuMzYiLCJudCI6eyJydHQiOjEzMiwiZGwiOnsic3oiOjMwMDAwMCwidCI6ODAsInJ0IjoxLCJzIjozMDAwMDAwMH0sInVsIjp7InN6IjozMDAwMDAsInQiOjExNywicnQiOjgxLCJzIjoyOTYyOTYzMH19LCJzdHUiOiIyMDI0LTAxLTIxVDEyOjI0OjM2LjY3N1oiLCJidHUiOiIyMDI0LTAxLTIxVDEyOjI0OjM5LjYwNloiLCJidGwiOiJTdW4gSmFuIDIxIDIwMjQgMTM6MjQ6MzkgR01UKzAxMDAgKENlbnRyYWwgRXVyb3BlYW4gU3RhbmRhcmQgVGltZSkiLCJjIjoiIiwiZSI6IiJ9
+curl https://ipsaur.plechenko.deno.net/s?eyJpcCI6IjE2My4xMTYuMTc4LjI5IiwidWEiOiJNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvMTIwLjAuMC4wIFNhZmFyaS81MzcuMzYiLCJudCI6eyJydHQiOjEzMiwiZGwiOnsic3oiOjMwMDAwMCwidCI6ODAsInJ0IjoxLCJzIjozMDAwMDAwMH0sInVsIjp7InN6IjozMDAwMDAsInQiOjExNywicnQiOjgxLCJzIjoyOTYyOTYzMH19LCJzdHUiOiIyMDI0LTAxLTIxVDEyOjI0OjM2LjY3N1oiLCJidHUiOiIyMDI0LTAxLTIxVDEyOjI0OjM5LjYwNloiLCJidGwiOiJTdW4gSmFuIDIxIDIwMjQgMTM6MjQ6MzkgR01UKzAxMDAgKENlbnRyYWwgRXVyb3BlYW4gU3RhbmRhcmQgVGltZSkiLCJjIjoiIiwiZSI6IiJ9
 ```
 
 ![Screenshot](media/curl_shared_result.png)
@@ -84,7 +78,7 @@ curl https://ipsaur.deno.dev/s?eyJpcCI6IjE2My4xMTYuMTc4LjI5IiwidWEiOiJNb3ppbGxhL
 To receive your IP addresss only just use `/ip` handler
 
 ```shell
-curl https://ipsaur.deno.dev/ip
+curl https://ipsaur.plechenko.deno.net/ip
 ```
 
 #### JSON
@@ -92,13 +86,13 @@ curl https://ipsaur.deno.dev/ip
 Add http header `Content-Type: text/json` or `Content-Type: application/json`
 
 ```shell
-curl https://ipsaur.deno.dev -H 'Content-Type: text/json'
+curl https://ipsaur.plechenko.deno.net/ -H 'Content-Type: text/json'
 ```
 
 Or use handler `/json`
 
 ```shell
-curl https://ipsaur.deno.dev/json
+curl https://ipsaur.plechenko.deno.net/json
 ```
 
 #### YAML
@@ -106,13 +100,13 @@ curl https://ipsaur.deno.dev/json
 Add http header `Content-Type: text/yaml` or `Content-Type: application/yaml`
 
 ```shell
-curl https://ipsaur.deno.dev -H 'Content-Type: text/yaml'
+curl https://ipsaur.plechenko.deno.net/ -H 'Content-Type: text/yaml'
 ```
 
 Or use handler `/yaml`
 
 ```shell
-curl https://ipsaur.deno.dev/yaml
+curl https://ipsaur.plechenko.deno.net/yaml
 ```
 
 ## Built with
