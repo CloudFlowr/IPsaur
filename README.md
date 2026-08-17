@@ -17,7 +17,7 @@ Try IPsaur at https://ipsaur.plechenko.deno.net/.
 - Test results can be shared with others as URL. Results are not persisted anywhere.
 - Results can be received from server in json or yaml format
 
-## Setup
+## Setup (if you want to host it yourself)
 
 1. Install Deno as described [here](https://docs.deno.com/runtime/manual/getting_started/installation).
 
