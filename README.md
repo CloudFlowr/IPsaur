@@ -24,8 +24,8 @@ Try IPsaur at https://ipsaur.plechenko.deno.net/.
 2. Clone the repository
 
 ```shell
-git clone https://github.com/CloudFlowr/IPsaur
-cd IPsaur
+git clone https://github.com/plechenko/ipsaur
+cd ipsaur
 ```
 
 3. Review `config.ts` file.
