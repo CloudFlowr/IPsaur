@@ -23,9 +23,7 @@
             src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA1ElEQVR4nO3aMQ6DMBBEUVc5ecDknsAZkupHSKC4IQ5mHSztvBqsHe0IGocgH0APvDhueacLraAsxOZZe7gb8ADmvQmSZ0/54ZwJGJaZSoIMBgNYBdnEkiC7m7gwyFwSxHIAs3OCgiT+/dWi1ka+PNud+I/cmwlSCwqS0EYMoWolVC1DqFqeq4URBclxV62aUBDPG8GIguS4q1ZNKIjnjWBEQXLcVasmFCShjRhC1UqoWoZQtbxUqwXBc5CJ9owlQSLt6UvvosRGNjOuN5CO30WRcI032/CwcRZMTXIAAAAASUVORK5CYII=" />To
           clipboard</a>]</span>
       <% links.forEach(link=> { %>
-        <span class="nowrap">[<a href="<%= link.url %>" target="_blank"><img src="<%= link.icon %>" width1="22px" />
-            <%= link.name %>
-          </a>]</span>
+        <span class="nowrap">[<a href="<%= link.url %>" target="_blank"><img src="<%= link.icon %>" width1="22px" /><%= link.name %></a>]</span>
         <% }) %>
 
     </div>

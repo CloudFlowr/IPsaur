@@ -29,9 +29,7 @@
             src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAA10lEQVR4nOWUQQ6CMBREYcOOW+gF3EnPorcR8BByGndew4pHQI15pMlfEG1Af0ti4qyaNpn57UwnSf4aQAbsgQtggcrtxRSoeUcZU8AKaQEYWdtY5AvgLqRmIHAOJc7laTr82GmJU2Arhjo8gUZMbt3kjlxlMrACjoMpT8A6NHZXWTcyLbLvbpF+TT4SO4ebnOUq4onYPYBlELFHwMwlUOFHF+uJMhGxEr3aY/JGbfLsMVV8tIPcso3WpkxXRTlH2RXR23Qk1mFt+kGsdW2aePASa32b/jR6YOM7qBO4ZX0AAAAASUVORK5CYII=" />Share
           results</a>]</span>
       <% links.forEach(link=> { %>
-        <span class="nowrap">[<a href="<%= link.url %>" target="_blank"><img src="<%= link.icon %>" width1="22px" />
-            <%= link.name %>
-          </a>]</span>
+        <span class="nowrap">[<a href="<%= link.url %>" target="_blank"><img src="<%= link.icon %>" width1="22px" /><%= link.name %></a>]</span>
         <% }) %>
     </div>
   </div>
