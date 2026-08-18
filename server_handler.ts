@@ -1,11 +1,11 @@
 import config from "./config.ts";
-import { STATUS_CODE } from "std/http/status.ts";
-import { stringify as yaml_stringify } from "std/yaml/stringify.ts";
+import { STATUS_CODE } from "std/http/status";
+import { stringify as yaml_stringify } from "std/yaml/stringify";
 import { getIpDetails } from "./ip_details.ts";
 import { isRateLimited } from "./rate_limiter.ts";
 import { getTextResponse } from "./text_response.ts";
 import { log } from "./log.ts";
-import { decodeBase64 } from "std/encoding/base64.ts";
+import { decodeBase64 } from "std/encoding/base64";
 import { IpData } from "./types.ts";
 
 export function isIPv4(ip: string) {

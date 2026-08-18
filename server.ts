@@ -1,13 +1,14 @@
 import config from "./config.ts";
-import { STATUS_CODE } from "std/http/status.ts";
-import { join as path_join } from "std/path/join.ts";
-import { basename as path_basename } from "std/path/basename.ts";
-import { AsyncTemplateFunction as ejs_AsyncTemplateFunction, compile as ejs_compile } from "ejs";
+import { STATUS_CODE } from "std/http/status";
+import { join as path_join } from "std/path/join";
+import { basename as path_basename } from "std/path/basename";
+import ejs from "ejs";
+// import { AsyncTemplateFunction as ejs_AsyncTemplateFunction, compile as ejs_compile } from "ejs";
 import { handleServerRequest } from "./server_handler.ts";
 import { log } from "./log.ts";
 import { loadGeoLocationDBs } from "./ip_details.ts";
 
-const ejs_templates = new Map<string, ejs_AsyncTemplateFunction>();
+const ejs_templates = new Map<string, ejs.AsyncTemplateFunction>();
 const static_files = new Map<string, string>();
 
 export default function bootstrap() {
@@ -48,7 +49,7 @@ function compileEJSTemplates(templates_dir = "./templates") {
     if (dirEntry.isFile && dirEntry.name.endsWith(ejs_ext)) {
       const template = Deno.readTextFileSync(path_join(templates_dir, dirEntry.name));
       const template_name = path_basename(dirEntry.name, ejs_ext);
-      ejs_templates.set(template_name, ejs_compile(template, { async: true }));
+      ejs_templates.set(template_name, ejs.compile(template, { async: true }));
       log("VERBOSE", `Loaded EJS template '${template_name}'`);
     }
   }

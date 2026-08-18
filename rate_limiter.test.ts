@@ -1,5 +1,5 @@
-import { assertEquals } from "std/assert/assert_equals.ts";
-import { delay } from "std/async/delay.ts";
+import { assertEquals } from "std/assert";
+import { delay } from "std/async/delay";
 import { isRateLimited } from "./rate_limiter.ts";
 
 Deno.test("Should accept a single attempt", () => {
