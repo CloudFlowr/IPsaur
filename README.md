@@ -18,22 +18,40 @@ Try IPsaur at https://ipsaur.plechenko.deno.net/.
 
 ## Setup (if you want to host it yourself)
 
-1. Install Deno as described [here](https://docs.deno.com/runtime/manual/getting_started/installation).
-
-2. Clone the repository
+1. Clone the repository
 
 ```shell
 git clone https://github.com/plechenko/ipsaur
 cd ipsaur
 ```
 
-3. Review `config.ts` file.
+2. Review `config.ts` file.
 
-4. Run IPsaur using command:
+### As a Docker container
+
+1. Build the Docker image:
+
+```shell
+docker build -t ipsaur .
+```
+
+2. Run the Docker container:
+
+```shell
+docker run -d -p 8080:8080 --name ipsaur ipsaur
+```
+
+### As a Deno application
+
+1. Install Deno as described [here](https://docs.deno.com/runtime/manual/getting_started/installation).
+
+2. Run IPsaur using command:
 
 ```shell
 deno run --allow-net --allow-read --allow-env ./main.ts
 ```
+
+
 
 ## Usage
 

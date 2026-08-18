@@ -1,27 +1,22 @@
-# Based on https://github.com/denoland/deno_docker/blob/main/alpine.dockerfile
+FROM denoland/deno:latest
 
-ARG DENO_VERSION=1.39.1
-ARG BIN_IMAGE=denoland/deno:bin-${DENO_VERSION}
-FROM ${BIN_IMAGE} AS bin
+# # Create deno user
+# RUN addgroup --system deno && \
+#     adduser --system --ingroup deno deno
 
-FROM frolvlad/alpine-glibc:alpine-3.13
+# Switch to deno user
+USER deno
 
-RUN apk --no-cache add ca-certificates
+WORKDIR /app
 
-RUN addgroup --gid 1000 deno \
-  && adduser --uid 1000 --disabled-password deno --ingroup deno \
-  && mkdir /deno-dir/ \
-  && chown deno:deno /deno-dir/
+# Copy manifests first so the dependency install layer caches across
+# source-only edits
+COPY deno.json* ./
+RUN deno install
 
-ENV DENO_DIR /deno-dir/
-ENV DENO_INSTALL_ROOT /usr/local
-
-ARG DENO_VERSION
-ENV DENO_VERSION=${DENO_VERSION}
-COPY --from=bin /deno /bin/deno
-
-WORKDIR /deno-dir
+# Then copy the rest of the source
 COPY . .
 
-ENTRYPOINT ["/bin/deno"]
-CMD ["run", "--allow-net", "--allow-read", " --allow-env", "./main.ts"]
+ENV PORT=8080
+EXPOSE 8080
+CMD ["deno", "run", "--allow-net", "--allow-read=/app", "--allow-env", "./main.ts"]
