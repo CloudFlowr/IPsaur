@@ -118,7 +118,7 @@
     const share_accepted_el = document.getElementById("share_accepted");
     if (share_accepted_el) share_accepted_el.disabled = true;
     test_results.c = document.getElementById("share_comment").value || "";
-    const share_hash = btoa(JSON.stringify(test_results));
+    const share_hash = btoa(unescape(encodeURIComponent(JSON.stringify(test_results))));
     const u = new URL(window.location.origin);
     u.pathname = 's';
     u.search = share_hash;
