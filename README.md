@@ -1,5 +1,4 @@
-IPsaur
-============
+# IPsaur
 
 IPsaur is a simple self-hosted IP and network bandwidth checker based on [Deno](https://deno.com).
 
@@ -55,6 +54,8 @@ Then open the Share URL on another computer:
 ### cURL
 
 IPsaur supports output to cURL.
+
+> Hint: On Windows 10+ and Windows Server 2019+ use `curl.exe`
 
 ```shell
 curl https://ipsaur.plechenko.deno.net/
